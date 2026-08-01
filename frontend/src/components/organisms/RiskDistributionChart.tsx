@@ -44,14 +44,14 @@ export const RiskDistributionChart: React.FC = () => {
             <h3 className="text-base font-extrabold text-zinc-900 dark:text-[#F3DDB6] tracking-tight">
               Audit Risk Tracker
             </h3>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F3DDB6]/15 text-[#F3DDB6] border border-[#F3DDB6]/30">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/15 text-amber-700 dark:text-[#F3DDB6] border border-amber-500/30 dark:border-[#F3DDB6]/30">
               Live Ring
             </span>
           </div>
           <p className="text-xs text-zinc-500 dark:text-[#7E7E7E] mt-0.5">Real-time risk categorization</p>
         </div>
-        <div className="p-2 rounded-2xl bg-zinc-100 dark:bg-[#121215] border border-zinc-200 dark:border-[#8D9797]/30 text-[#F3DDB6] shadow-inner">
-          <ShieldAlert className="w-4 h-4 text-[#F3DDB6]" />
+        <div className="p-2 rounded-2xl bg-zinc-100 dark:bg-[#121215] border border-zinc-200 dark:border-[#8D9797]/30 text-amber-600 dark:text-[#F3DDB6] shadow-inner">
+          <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-[#F3DDB6]" />
         </div>
       </div>
 

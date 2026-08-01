@@ -36,15 +36,15 @@ export const UploadPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-200 dark:border-zinc-800 text-xs">
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
               <span className="font-extrabold text-slate-950 dark:text-white block">Multi-Modal Vision</span>
-              <span className="text-[11px] text-slate-500 dark:text-zinc-400">Extracts line items & GSTIN numbers</span>
+              <span className="text-[11px] text-slate-700 dark:text-zinc-300 font-medium">Extracts line items & GSTIN numbers</span>
             </div>
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
               <span className="font-extrabold text-slate-950 dark:text-white block">Anomaly Detection</span>
-              <span className="text-[11px] text-slate-500 dark:text-zinc-400">Detects price variance & duplicate bills</span>
+              <span className="text-[11px] text-slate-700 dark:text-zinc-300 font-medium">Detects price variance & duplicate bills</span>
             </div>
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
               <span className="font-extrabold text-slate-950 dark:text-white block">GSTN Sync Verification</span>
-              <span className="text-[11px] text-slate-500 dark:text-zinc-400">Checks filing active status</span>
+              <span className="text-[11px] text-slate-700 dark:text-zinc-300 font-medium">Checks filing active status</span>
             </div>
           </div>
         </Card>

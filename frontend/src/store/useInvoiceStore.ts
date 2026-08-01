@@ -35,7 +35,7 @@ export const useInvoiceStore = create<InvoiceState>((set, get) => ({
   searchQuery: '',
   selectedRiskFilter: 'ALL',
   selectedStatusFilter: 'ALL',
-  darkMode: true,
+  darkMode: false,
 
   addInvoice: (newInv) =>
     set((state) => {

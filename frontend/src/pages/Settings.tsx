@@ -192,7 +192,13 @@ export const SettingsPage: React.FC = () => {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button variant="primary" leftIcon={<Save className="w-4 h-4" />} onClick={handleSave}>
+            <Button
+              variant="primary"
+              size="lg"
+              leftIcon={<Save className="w-5 h-5" />}
+              onClick={handleSave}
+              className="px-8 py-3.5 text-base font-extrabold shadow-md hover:shadow-xl transition-all"
+            >
               Save Configurations
             </Button>
           </div>

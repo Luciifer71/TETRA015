@@ -75,10 +75,21 @@
 @tailwind utilities;
 
 @layer base {
-  body, button, input, select, textarea {
-    font-family: 'Bragton Demo', sans-serif;
+
+  *,
+  ::before,
+  ::after {
+    font-family: 'Bragton Demo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   }
-  
+
+  body,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: 'Bragton Demo', sans-serif !important;
+  }
+
   html.dark body {
     background: linear-gradient(to right, #000000 0%, #08080a 25%, #101014 55%, #18181c 80%, #222226 100%);
     background-attachment: fixed;
@@ -152,11 +163,19 @@
 }
 
 @keyframes subtle-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
 }
 
 .animate-subtle-pulse {
   animation: subtle-pulse 3s infinite ease-in-out;
 }
-
