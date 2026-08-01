@@ -2,9 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.config import settings
 
+# Only pass check_same_thread if using SQLite
+connect_args = {}
+if "sqlite" in settings.database_url:
+    connect_args = {"check_same_thread": False}
+
 engine = create_engine(
     settings.database_url,
-    connect_args={"check_same_thread": False},
+    connect_args=connect_args,
     pool_pre_ping=True,
 )
 
