@@ -44,26 +44,26 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-zinc-950 p-4 transition-colors">
+      <div className="max-w-md w-full bg-white dark:bg-[#1c1c22] border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-6">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="text-center text-3xl font-black text-slate-950 dark:text-white tracking-tight">
             Invoice Guard AI
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your account
+          <p className="mt-2 text-center text-xs font-semibold text-slate-600 dark:text-zinc-400">
+            Sign in to your audit dashboard account
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="space-y-5" onSubmit={handleLogin}>
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="rounded-2xl bg-rose-500/10 border border-rose-500/30 p-4">
+              <p className="text-xs font-bold text-rose-700 dark:text-rose-400">{error}</p>
             </div>
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-xs font-extrabold text-slate-900 dark:text-zinc-200 mb-1.5">
               Email address
             </label>
             <input
@@ -72,13 +72,13 @@ export function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-950 dark:text-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-amber-500"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="block text-xs font-extrabold text-slate-900 dark:text-zinc-200 mb-1.5">
               Password
             </label>
             <input
@@ -87,7 +87,7 @@ export function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-950 dark:text-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-amber-500"
               required
             />
           </div>
@@ -95,15 +95,15 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400"
+            className="w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white bg-[#2E2E2D] hover:bg-[#4B4C51] dark:bg-[#8D9797] dark:hover:bg-[#a1acac] dark:text-[#000000] shadow-md transition-all disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
 
-          <div className="text-center mt-4">
+          <div className="text-center pt-2">
             <a
               href="/setup-admin"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+              className="text-xs font-extrabold text-slate-900 dark:text-amber-400 hover:underline"
             >
               First time? Set up your Admin Account →
             </a>

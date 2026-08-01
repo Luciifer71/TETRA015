@@ -94,7 +94,7 @@ export const AuditTrailPage: React.FC = () => {
                 filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
                     <td className="py-3 px-4 font-mono font-semibold text-slate-600 dark:text-zinc-400">{log.timestamp}</td>
-                    <td className="py-3 px-4 font-extrabold text-amber-600 dark:text-yellow-400">{log.invoiceNumber}</td>
+                    <td className="py-3 px-4 font-black text-slate-950 dark:text-yellow-400">{log.invoiceNumber}</td>
                     <td className="py-3 px-4 font-bold text-slate-950 dark:text-zinc-200">{log.actor} ({log.role})</td>
                     <td className="py-3 px-4 font-extrabold text-slate-950 dark:text-zinc-100">{log.action}</td>
                     <td className="py-3 px-4 text-slate-700 dark:text-zinc-300 max-w-xs truncate">{log.details}</td>

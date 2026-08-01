@@ -27,34 +27,32 @@ export const Sidebar: React.FC = () => {
     <motion.aside
       initial={false}
       animate={{ width: collapsed ? 80 : 256 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="relative flex flex-col h-screen bg-[#F3F3F3] dark:bg-black/90 border-r border-[#D0D0D2] dark:border-white/10 z-30 select-none shrink-0 backdrop-blur-2xl"
+      transition={{ type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.25 }}
+      className="relative flex flex-col h-screen bg-[#F3F3F3] dark:bg-[#121215] border-r border-[#D0D0D2] dark:border-white/10 z-30 select-none shrink-0"
     >
       {/* Floating Toggle Button on Border Edge */}
-      <motion.button
+      <button
         onClick={() => setCollapsed(!collapsed)}
-        animate={{ rotate: collapsed ? 180 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="absolute -right-3.5 top-6 z-40 p-1.5 rounded-full bg-white dark:bg-[#121215] text-[#4B4C51] dark:text-[#F3DDB6] hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6] hover:bg-slate-100 dark:hover:bg-white/10 transition-all border border-[#D0D0D2] dark:border-white/15 shadow-md hover:scale-110"
+        className="absolute -right-3.5 top-6 z-40 p-1.5 rounded-full bg-white dark:bg-[#1c1c22] text-[#4B4C51] dark:text-[#F3DDB6] hover:text-[#2E2E2D] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-[#D0D0D2] dark:border-white/15 shadow-md hover:scale-110 transition-transform duration-200"
         title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
-        <ChevronLeft className="w-3.5 h-3.5" />
-      </motion.button>
+        <ChevronLeft className={`w-3.5 h-3.5 transition-transform duration-300 ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
+      </button>
 
       {/* Brand Header */}
-      <div className={`flex items-center ${collapsed ? 'justify-center px-0' : 'px-5'} h-20 border-b border-[#D0D0D2] dark:border-white/10`}>
+      <div className="flex items-center px-4 h-20 border-b border-[#D0D0D2] dark:border-white/10 shrink-0 overflow-hidden">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-[#2E2E2D] dark:bg-gradient-to-tr dark:from-white/20 dark:via-[#F3DDB6] dark:to-[#F3DDB6] text-white dark:text-[#000000] shadow-md shrink-0 font-bold">
             <ShieldCheck className="w-6 h-6 text-white dark:text-[#000000]" />
           </div>
           
-          <AnimatePresence initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             {!collapsed && (
               <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.12 }}
                 className="flex flex-col whitespace-nowrap overflow-hidden"
               >
                 <span className="text-base font-black text-[#2E2E2D] dark:text-[#F3DDB6] tracking-tight flex items-center gap-1.5">
@@ -77,21 +75,21 @@ export const Sidebar: React.FC = () => {
             to={item.path}
             title={collapsed ? item.label : undefined}
             className={({ isActive }) =>
-              `flex items-center ${collapsed ? 'justify-center px-0' : 'px-3.5'} py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
+              `flex items-center px-3.5 py-3 rounded-2xl text-sm font-semibold transition-colors duration-150 overflow-hidden ${
                 isActive
-                  ? 'bg-[#2E2E2D] text-white border border-[#2E2E2D] dark:bg-white/10 dark:text-[#F3DDB6] dark:border-white/15 shadow-sm backdrop-blur-md font-bold'
+                  ? 'bg-[#2E2E2D] text-white border border-[#2E2E2D] dark:bg-white/10 dark:text-[#F3DDB6] dark:border-white/15 shadow-sm font-bold'
                   : 'text-[#4B4C51] dark:text-[#7E7E7E] hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6] hover:bg-[#D0D0D2]/40 dark:hover:bg-white/5'
               }`
             }
           >
             <div className="shrink-0">{item.icon}</div>
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
               {!collapsed && (
                 <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.12 }}
                   className="ml-3 truncate whitespace-nowrap overflow-hidden"
                 >
                   {item.label}
@@ -103,25 +101,25 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* System Status Footer */}
-      <div className="p-3 mb-4 mx-3">
-        <AnimatePresence initial={false}>
+      <div className="p-3 mb-4 mx-3 shrink-0 overflow-hidden">
+        <AnimatePresence mode="wait" initial={false}>
           {!collapsed ? (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="p-4 rounded-2xl bg-[#D0D0D2]/30 dark:bg-white/5 border border-[#D0D0D2] dark:border-white/10 shadow-sm backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.12 }}
+              className="p-4 rounded-2xl bg-[#D0D0D2]/30 dark:bg-white/5 border border-[#D0D0D2] dark:border-white/10 shadow-sm overflow-hidden"
             >
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#2E2E2D] dark:bg-[#F3DDB6] animate-ping" />
-                <span className="text-xs font-bold text-[#2E2E2D] dark:text-[#F3DDB6]">AI Risk Rules Active</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#2E2E2D] dark:bg-[#F3DDB6] animate-ping shrink-0" />
+                <span className="text-xs font-bold text-[#2E2E2D] dark:text-[#F3DDB6] truncate">AI Risk Rules Active</span>
               </div>
-              <p className="text-[11px] text-[#4B4C51] dark:text-[#7E7E7E] mt-1">GSTN & Ledger Sync Live</p>
+              <p className="text-[11px] text-[#4B4C51] dark:text-[#7E7E7E] mt-1 truncate">GSTN & Ledger Sync Live</p>
             </motion.div>
           ) : (
-            <div className="flex justify-center py-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2E2E2D] dark:bg-[#F3DDB6] animate-pulse" title="AI Active" />
+            <div className="flex justify-start px-1 py-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2E2E2D] dark:bg-[#F3DDB6] animate-pulse shrink-0" title="AI Active" />
             </div>
           )}
         </AnimatePresence>
