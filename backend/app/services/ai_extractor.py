@@ -67,22 +67,54 @@ async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResu
     _configure_gemini()
     _rate_limiter.acquire()
     
+    # Convert incoming PDF/image to byte arrays
     images = convert_to_images(file_path, mime_type)
     primary_image = images[0]
     
-    model = genai.GenerativeModel(settings.gemini_model)
+    # Priority list of model names to attempt
+    candidate_models = [
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-flash-latest",
+        "gemini-2.5-pro",
+    ]
+    
+    # Try initializing and calling with candidates
+    response = None
+    last_error = None
     
     image_part = {
         "mime_type": "image/png",
         "data": base64.b64encode(primary_image).decode("utf-8"),
     }
-    
-    response = await model.generate_content_async([EXTRACTION_PROMPT, image_part])
+
+    for model_name in candidate_models:
+        try:
+            model = genai.GenerativeModel(model_name)
+            response = await model.generate_content_async([EXTRACTION_PROMPT, image_part])
+            if response:
+                break
+        except Exception as e:
+            last_error = e
+            continue
+
+    if response is None:
+        raise RuntimeError(f"All Gemini model attempts failed. Last error: {last_error}")
     
     raw_text = response.text if response.text else "{}"
     
+    # Sanitize markdown code blocks from response text if present
+    cleaned_text = raw_text.strip()
+    if cleaned_text.startswith("```"):
+        lines = cleaned_text.splitlines()
+        if lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].startswith("```"):
+            lines = lines[:-1]
+        cleaned_text = "\n".join(lines).strip()
+    
     try:
-        extracted = json.loads(raw_text)
+        extracted = json.loads(cleaned_text)
     except json.JSONDecodeError:
         extracted = {}
     

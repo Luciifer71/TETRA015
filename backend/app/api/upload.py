@@ -1,8 +1,9 @@
 import uuid
+from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.database import get_db, SessionLocal
 from app.models import Upload
 from app.services import process_upload
 from app.schemas import UploadResponse, UploadDetailResponse, BaseResponse
@@ -19,36 +20,41 @@ async def upload_invoice(
 ):
     """Upload invoice file for processing"""
     file_id = generate_id()
+    mime_type = file.content_type or "application/octet-stream"
+
     upload = Upload(
         id=file_id,
         original_filename=file.filename,
         stored_filename="",
         file_path="",
         file_size=0,
-        file_type=file.content_type or "",
-        file_extension="",
+        file_type=mime_type,
+        file_extension=Path(file.filename or "").suffix,
         upload_status="PENDING",
     )
     db.add(upload)
     db.commit()
-    
+
     try:
-        file_path, mime_type = await process_upload(db, upload, file)
+        # Pass all 4 required positional arguments to process_upload
+        file_path, validated_mime_type = await process_upload(db, upload, file, mime_type)
+        
         upload.stored_filename = Path(file_path).name
         upload.file_path = file_path
         upload.file_size = Path(file_path).stat().st_size
-        upload.file_type = mime_type
+        upload.file_type = validated_mime_type
         upload.file_extension = Path(file_path).suffix
         upload.upload_status = "PROCESSING"
         db.commit()
-        
-        background_tasks.add_task(_process_background, upload.id, file_path, mime_type)
-        
+
+        # Add background extraction job
+        background_tasks.add_task(_process_background, upload.id, file_path, validated_mime_type)
+
         return BaseResponse(
             success=True,
             data=UploadResponse(
                 invoice_id=upload.invoice_id or "",
-                file_name=file.filename,
+                file_name=file.filename or "",
                 file_size=upload.file_size,
                 status=upload.upload_status,
                 uploaded_at=upload.uploaded_at,
@@ -65,7 +71,6 @@ async def upload_invoice(
 
 
 async def _process_background(upload_id: str, file_path: str, mime_type: str):
-    from app.database import SessionLocal
     db = SessionLocal()
     try:
         upload = db.query(Upload).filter(Upload.id == upload_id).first()
@@ -89,12 +94,9 @@ async def get_upload_status(upload_id: str, db: Session = Depends(get_db)):
     upload = db.query(Upload).filter(Upload.id == upload_id).first()
     if not upload:
         raise HTTPException(status_code=404, detail="Upload not found")
-    
+
     return BaseResponse(
         success=True,
         data=UploadDetailResponse.from_orm(upload),
         message="Upload details retrieved",
     )
-
-
-from pathlib import Path

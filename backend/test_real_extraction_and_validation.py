@@ -1,6 +1,6 @@
 """
 REAL EXTRACTION & VALIDATION TEST
-Extracts actual data from image.png and validates against Purchase Ledger
+Extracts actual data from invoice files (PDF/Image) and validates against Purchase Ledger
 """
 
 import sys
@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from app.database import SessionLocal, init_db
 from app.models import PurchaseLedger, VendorMaster, Invoice
+from app.services.ai_extractor import extract_invoice_data
 from app.services.ocr_fusion import get_ocr_fusion
 from app.config import settings
 from groq import Groq
@@ -110,20 +111,21 @@ async def setup_vendor_master(db):
         print(f"   • {vendor.vendor_name} (GST: {vendor.gst_number})")
 
 
-async def extract_from_image(image_path):
-    """Extract invoice data from real image using Groq"""
-    print(f"\n⏳ Extracting invoice data from {image_path.name}...")
+async def extract_from_image(file_path: Path):
+    """Extract invoice data from real image or PDF using Groq"""
+    print(f"\n⏳ Extracting invoice data from {file_path.name}...")
     
     try:
-        # Use OCR fusion
-        fusion = get_ocr_fusion()
+        # Pass the file_path directly into get_ocr_fusion
+        fusion_data = await get_ocr_fusion(str(file_path))
         
-        # Extract text from image
-        easyocr_result = fusion.extract_with_easyocr(str(image_path))
-        ocr_text = easyocr_result.text
-        ocr_confidence = easyocr_result.confidence
-        
-        print(f"   OCR extracted {len(ocr_text)} characters ({ocr_confidence:.0%} confidence)")
+        # If get_ocr_fusion returns a dict or text directly:
+        if isinstance(fusion_data, dict):
+            ocr_text = json.dumps(fusion_data)
+        else:
+            ocr_text = str(fusion_data or "")
+            
+        print(f"   OCR extracted {len(ocr_text)} characters from file")
         
         # Parse with Groq
         print(f"   Parsing with Groq...")
@@ -180,9 +182,10 @@ async def validate_against_ledger(db, invoice_data):
     }
     
     # Check 1: Vendor exists in master
+    vendor_name = invoice_data.get('vendor_name') or ""
     vendor = db.query(VendorMaster).filter(
-        VendorMaster.vendor_name.ilike(f"%{invoice_data['vendor_name']}%")
-    ).first()
+        VendorMaster.vendor_name.ilike(f"%{vendor_name}%")
+    ).first() if vendor_name else None
     
     if vendor:
         validation_result["checks"].append({
@@ -195,7 +198,7 @@ async def validate_against_ledger(db, invoice_data):
         validation_result["checks"].append({
             "type": "VENDOR_NOT_FOUND",
             "status": "FAIL ⚠️",
-            "message": f"Vendor '{invoice_data['vendor_name']}' not in master database",
+            "message": f"Vendor '{vendor_name}' not in master database",
             "risk": "HIGH"
         })
     
@@ -206,23 +209,26 @@ async def validate_against_ledger(db, invoice_data):
     validation_result["checks"].append({
         "type": "GSTIN_FORMAT",
         "status": "PASS ✅" if gst_valid else "FAIL ⚠️",
-        "message": f"GSTIN length: {len(gst)}/15",
+        "message": f"GSTIN length: {len(gst or '')}/15",
         "gstin": gst
     })
     
     # Check 3: Amount range check
     po = db.query(PurchaseLedger).filter(
-        PurchaseLedger.vendor_name.ilike(f"%{invoice_data['vendor_name']}%")
-    ).first()
+        PurchaseLedger.vendor_name.ilike(f"%{vendor_name}%")
+    ).first() if vendor_name else None
     
     if po:
-        amount_match = abs(float(po.expected_amount) - float(invoice_data.get('total_amount', 0))) < 1000
+        po_amt = float(po.expected_amount)
+        inv_amt = float(invoice_data.get('total_amount') or 0.0)
+        amount_match = abs(po_amt - inv_amt) < 1000
+        
         validation_result["checks"].append({
             "type": "AMOUNT_VERIFICATION",
             "status": "PASS ✅" if amount_match else "WARN ⚠️",
-            "po_amount": float(po.expected_amount),
-            "invoice_amount": float(invoice_data.get('total_amount', 0)),
-            "difference": float(po.expected_amount) - float(invoice_data.get('total_amount', 0))
+            "po_amount": po_amt,
+            "invoice_amount": inv_amt,
+            "difference": po_amt - inv_amt
         })
     
     # Check 4: Invoice number check
@@ -243,10 +249,25 @@ async def validate_against_ledger(db, invoice_data):
     return validation_result
 
 
+def locate_test_file() -> Path | None:
+    """Finds demo PDF or image across standard project paths"""
+    possible_paths = [
+        Path(__file__).parent / "demo-invoice-20tax-2.pdf",
+        Path(__file__).parent.parent / "demo-invoice-20tax-2.pdf",
+        Path(__file__).parent.parent / "image.png",
+        Path(__file__).parent / "image.png"
+    ]
+    
+    for p in possible_paths:
+        if p.exists():
+            return p
+    return None
+
+
 async def main():
     print("\n" + "="*90)
     print("REAL EXTRACTION & VALIDATION TEST")
-    print("Extracts from image.png → Validates against Purchase Ledger")
+    print("Extracts from invoice file → Validates against Purchase Ledger")
     print("="*90)
     
     db = SessionLocal()
@@ -257,13 +278,13 @@ async def main():
         await setup_ledger(db)
         await setup_vendor_master(db)
         
-        # Extract from real image
-        image_path = Path(__file__).parent.parent / "image.png"
-        if not image_path.exists():
-            print(f"❌ Image not found: {image_path}")
+        # Locate sample file dynamically
+        test_file_path = locate_test_file()
+        if not test_file_path:
+            print("❌ No test invoice file found! Please place 'demo-invoice-20tax-2.pdf' or 'image.png' in the root or backend folder.")
             return
-        
-        extracted_invoice = await extract_from_image(image_path)
+
+        extracted_invoice = await extract_from_image(test_file_path)
         if not extracted_invoice:
             return
         
@@ -277,7 +298,8 @@ async def main():
         
         print(f"\n📄 Invoice: {validation['invoice_number']}")
         print(f"🏢 Vendor: {validation['vendor_name']}")
-        print(f"💰 Amount: ₹{validation['total_amount']:,.2f}")
+        tot_amt = validation['total_amount'] or 0.0
+        print(f"💰 Amount: ₹{float(tot_amt):,.2f}")
         
         print(f"\n📋 Checks:")
         for check in validation['checks']:
