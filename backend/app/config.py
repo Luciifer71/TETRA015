@@ -11,6 +11,14 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-1.5-pro"
 
+    # Alternative LLM providers
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.1-8b-instant"
+    openrouter_api_key: str = ""
+    anthropic_api_key: str = ""
+    openai_api_key: str = ""
+    active_llm_provider: str = "gemini"
+
     database_url: str = "sqlite:///./database.db"
     upload_dir: str = "./uploads"
     max_file_size: int = 10 * 1024 * 1024
@@ -25,6 +33,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"
 
 
 @lru_cache
