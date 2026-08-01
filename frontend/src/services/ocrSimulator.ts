@@ -14,23 +14,27 @@ export const processInvoiceUpload = async (
   const fileName = file.name;
   
   // Step 1: Uploading
-  onProgress?.({ step: 1, totalSteps: 5, message: `Uploading ${fileName}...`, progress: 20 });
-  await new Promise((res) => setTimeout(res, 600));
+  onProgress?.({ step: 1, totalSteps: 6, message: `Uploading ${fileName}...`, progress: 15 });
+  await new Promise((res) => setTimeout(res, 500));
 
   // Step 2: OCR Vision Extraction
-  onProgress?.({ step: 2, totalSteps: 5, message: 'Extracting text and line items via AI Vision Model...', progress: 45 });
-  await new Promise((res) => setTimeout(res, 800));
+  onProgress?.({ step: 2, totalSteps: 6, message: 'Extracting text and line items via AI Vision Model...', progress: 35 });
+  await new Promise((res) => setTimeout(res, 650));
 
-  // Step 3: Purchase Ledger & Vendor Verification
-  onProgress?.({ step: 3, totalSteps: 5, message: 'Matching against Purchase Order & Vendor Master DB...', progress: 70 });
-  await new Promise((res) => setTimeout(res, 700));
+  // Step 3: Document Authenticity & Forensics Scan
+  onProgress?.({ step: 3, totalSteps: 6, message: 'AI Authenticity Engine: Inspecting font layers, EXIF metadata & compression artifacts...', progress: 55 });
+  await new Promise((res) => setTimeout(res, 750));
 
-  // Step 4: Tax & GSTIN Audit
-  onProgress?.({ step: 4, totalSteps: 5, message: 'Verifying GSTIN status & tax rate calculations...', progress: 88 });
+  // Step 4: Purchase Ledger & Vendor Verification
+  onProgress?.({ step: 4, totalSteps: 6, message: 'Matching against Purchase Order & Vendor Master DB...', progress: 75 });
   await new Promise((res) => setTimeout(res, 600));
 
-  // Step 5: Risk Intelligence Scoring
-  onProgress?.({ step: 5, totalSteps: 5, message: 'Generating risk score and AI audit explanation...', progress: 100 });
+  // Step 5: Tax & GSTIN Audit
+  onProgress?.({ step: 5, totalSteps: 6, message: 'Verifying GSTIN status & tax rate calculations...', progress: 90 });
+  await new Promise((res) => setTimeout(res, 500));
+
+  // Step 6: Risk Intelligence Scoring
+  onProgress?.({ step: 6, totalSteps: 6, message: 'Generating risk score & authenticity report...', progress: 100 });
   await new Promise((res) => setTimeout(res, 400));
 
   // Generate simulated extracted invoice based on filename hints or defaults
@@ -111,13 +115,28 @@ export const processInvoiceUpload = async (
       {
         id: `al-${randNum}-2`,
         timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-        actor: 'Risk Engine',
+        actor: 'Authenticity Engine',
         role: 'System',
-        action: 'Risk Classification',
-        details: `Assigned risk score ${riskScore} [${riskLevel}]`,
-        status: riskScore > 60 ? 'WARNING' : 'SUCCESS'
+        action: 'Forensic Authenticity Audit',
+        details: isHighRisk ? `Detected potential document alteration (Forgery Score: ${riskScore}%)` : 'Document verified authentic with zero font or metadata anomalies',
+        status: isHighRisk ? 'WARNING' : 'SUCCESS'
       }
-    ]
+    ],
+    authenticityReport: {
+      forgeryScore: isHighRisk ? riskScore : Math.floor(2 + Math.random() * 12),
+      verdict: isHighRisk ? (riskScore > 90 ? 'FORGED' : 'SUSPICIOUS') : 'AUTHENTIC',
+      summary: isHighRisk
+        ? 'Digital manipulation warning: Document structure or font layers indicate potential editing prior to submission.'
+        : 'All 5 document forensic checks passed cleanly. No digital alteration, font layer discrepancy, or EXIF metadata modification detected.',
+      tamperedFields: isHighRisk ? ['Total Amount Box', 'Font Layer Alignment'] : [],
+      forensicChecks: {
+        fontConsistency: { name: 'Font & Typography Layer', passed: !isHighRisk, details: isHighRisk ? 'Typography weight mismatch in billing table.' : 'Uniform font vectors verified.' },
+        metadataIntegrity: { name: 'PDF Metadata & History', passed: true, details: 'Valid creation software signature.' },
+        pixelCompression: { name: 'Compression Artifact Inspection', passed: true, details: 'Consistent JPEG/PDF compression map.' },
+        alignmentGrid: { name: 'Spatial & Grid Alignment', passed: !isHighRisk, details: isHighRisk ? 'Minor vertical text displacement detected.' : 'Pixel baseline grid verified.' },
+        logoSignature: { name: 'Logo & Signature Forensics', passed: true, details: 'Vector logo resolution verified.' },
+      },
+    },
   };
 
   return createdInvoice;

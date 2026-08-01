@@ -44,7 +44,20 @@ export const INITIAL_INVOICES: Invoice[] = [
     auditLogs: [
       { id: 'al-1', timestamp: '2026-07-28 10:14:00', actor: 'AI OCR Pipeline', role: 'System', action: 'Data Extraction', details: 'Extracted 12 fields with 97.4% confidence', status: 'SUCCESS' },
       { id: 'al-2', timestamp: '2026-07-28 10:14:05', actor: 'Risk Intelligence Engine', role: 'System', action: 'Risk Scoring', details: 'Calculated risk score 88/100 [HIGH RISK]', status: 'WARNING' }
-    ]
+    ],
+    authenticityReport: {
+      forgeryScore: 82,
+      verdict: 'FORGED',
+      summary: 'Digital manipulation detected: Total amount & line item text layers were altered using PDF editing software post-generation.',
+      tamperedFields: ['Total Amount Field', 'Line Item 2 Description', 'GST Rate Layer'],
+      forensicChecks: {
+        fontConsistency: { name: 'Font & Typography Layer', passed: false, details: 'Secondary font embedding (Helvetica-Bold) detected only in total amount field.' },
+        metadataIntegrity: { name: 'PDF Metadata & History', passed: false, details: 'Document edited in Adobe Acrobat Pro 2024 after initial PDF export.' },
+        pixelCompression: { name: 'Compression Artifact Inspection', passed: true, details: 'No pixel manipulation or clone tool artifacts detected.' },
+        alignmentGrid: { name: 'Spatial & Grid Alignment', passed: false, details: 'Total amount text box displaced vertically by 3.2px from baseline grid.' },
+        logoSignature: { name: 'Logo & Signature Forensics', passed: true, details: 'Vendor logo vector curves & signature integrity verified.' },
+      },
+    },
   },
   {
     id: 'INV-2026-002',

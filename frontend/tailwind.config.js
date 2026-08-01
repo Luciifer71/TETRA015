@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Bragton Demo"', '"DM Sans"', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['"Bragton Demo"', 'monospace'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
       },
       borderRadius: {
         'xl': '14px',

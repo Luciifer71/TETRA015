@@ -4,6 +4,7 @@ import { X, ExternalLink, ShieldAlert, CheckCircle2, FileWarning, XCircle, Build
 import { Invoice } from '../../types/invoice';
 import { Badge } from '../atoms/Badge';
 import { Button } from '../atoms/Button';
+import { AuthenticityForensicsPanel } from './AuthenticityForensicsPanel';
 import { useInvoiceStore } from '../../store/useInvoiceStore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -26,6 +27,7 @@ export const QuickInvoiceDrawer: React.FC<QuickInvoiceDrawerProps> = ({ invoice,
   const handleAction = (status: 'APPROVED' | 'FLAGGED' | 'REJECTED') => {
     updateInvoiceStatus(invoice.id, status);
     toast.success(`Invoice ${invoice.invoiceNumber} marked as ${status}`);
+    onClose();
   };
 
   return (
@@ -114,6 +116,9 @@ export const QuickInvoiceDrawer: React.FC<QuickInvoiceDrawerProps> = ({ invoice,
                 OCR Confidence: <span className="font-semibold text-emerald-600 dark:text-emerald-400">{invoice.ocrConfidence}%</span>
               </p>
             </div>
+
+            {/* AI Document Authenticity Engine Forensics */}
+            <AuthenticityForensicsPanel report={invoice.authenticityReport} />
 
             {/* AI Risk Flags Section */}
             <div className="space-y-3">

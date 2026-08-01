@@ -2,7 +2,8 @@ import React from 'react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card } from '../components/atoms/Card';
 import { FileDropzone } from '../components/molecules/FileDropzone';
-import { Sparkles, ShieldCheck, FileSpreadsheet } from 'lucide-react';
+import { AuthenticityEngineBanner } from '../components/molecules/AuthenticityEngineBanner';
+import { Sparkles, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const UploadPage: React.FC = () => {
@@ -10,7 +11,10 @@ export const UploadPage: React.FC = () => {
 
   return (
     <AppLayout title="Invoice AI Upload & OCR Risk Audit">
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* AI Document Authenticity Engine Banner */}
+        <AuthenticityEngineBanner />
+
         <Card variant="glass" className="space-y-6 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-xl">
           <div className="flex items-center justify-between">
             <div>

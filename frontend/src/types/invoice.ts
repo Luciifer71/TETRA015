@@ -32,6 +32,26 @@ export interface AuditLogEntry {
   status: 'SUCCESS' | 'WARNING' | 'ERROR';
 }
 
+export interface ForensicCheckItem {
+  name: string;
+  passed: boolean;
+  details: string;
+}
+
+export interface AuthenticityReport {
+  forgeryScore: number; // 0 to 100
+  verdict: 'AUTHENTIC' | 'SUSPICIOUS' | 'FORGED';
+  summary: string;
+  forensicChecks: {
+    fontConsistency: ForensicCheckItem;
+    metadataIntegrity: ForensicCheckItem;
+    pixelCompression: ForensicCheckItem;
+    alignmentGrid: ForensicCheckItem;
+    logoSignature: ForensicCheckItem;
+  };
+  tamperedFields?: string[];
+}
+
 export interface Invoice {
   id: string;
   invoiceNumber: string;
@@ -52,6 +72,7 @@ export interface Invoice {
   riskFlags: RiskFlag[];
   auditLogs: AuditLogEntry[];
   pdfUrl?: string;
+  authenticityReport?: AuthenticityReport;
 }
 
 export interface DashboardSummary {

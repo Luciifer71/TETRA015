@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AppLayout } from '../components/layout/AppLayout';
 import { ExtractedDataPanel } from '../components/organisms/ExtractedDataPanel';
+import { AuthenticityForensicsPanel } from '../components/organisms/AuthenticityForensicsPanel';
 import { AuditTimeline } from '../components/organisms/AuditTimeline';
 import { useInvoiceStore } from '../store/useInvoiceStore';
 import { Button } from '../components/atoms/Button';
-import { ChevronLeft, FileText, ShieldAlert, History } from 'lucide-react';
+import { ChevronLeft, FileText, History } from 'lucide-react';
 
 export const InvoiceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,7 +70,10 @@ export const InvoiceDetailPage: React.FC = () => {
         </div>
 
         {activeTab === 'overview' ? (
-          <ExtractedDataPanel invoice={invoice} />
+          <div className="space-y-6">
+            <AuthenticityForensicsPanel report={invoice.authenticityReport} />
+            <ExtractedDataPanel invoice={invoice} />
+          </div>
         ) : (
           <AuditTimeline logs={invoice.auditLogs} />
         )}
