@@ -34,6 +34,13 @@ pip-delete-this-directory.txt
 # FastAPI
 .uvicorn/
 
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+package-lock.json
+
 # IDEs
 .vscode/
 .idea/
@@ -52,6 +59,7 @@ pip-delete-this-directory.txt
 .env
 .env.local
 .env.*.local
+.admin-credentials
 
 # Database
 *.db
@@ -89,6 +97,9 @@ frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 
+# Backend
+backend/node_modules/
+
 # Build outputs
 dist/
 build/
@@ -113,18 +124,10 @@ coverage.xml
 .dmypy.json
 dmypy.json
 .pyre/
-.idea/
-.vscode/
-*.iml
 
 # Docker
 .dockerignore
 docker-compose.override.yml
-
-# IDE settings
-.vscode/settings.json
-.vscode/launch.json
-.vscode/extensions.json
 
 # AI/ML
 *.model
@@ -141,6 +144,16 @@ backend/data/sample_invoices/
 .mimocode/
 .mimocode/.cron-lock
 
-# Documentation (local only)
-docs/
-*.local.md
+# Documentation (generated local only)
+docs/REAL_EXTRACTION_VALIDATION_RESULTS.json
+docs/COMPLETE_WORKFLOW_TEST_RESULTS.json
+docs/ENSEMBLE_TEST_RESULTS.json
+docs/FIELD_EXTRACTION_TEST_RESULTS.json
+docs/GROQ_EXTRACTION_TEST_RESULTS.json
+docs/REAL_IMAGE_TEST_RESULTS.json
+docs/UNIFIED_PROCESSOR_REPORT.json
+
+# Credentials & Secrets
+.admin-credentials
+admin-credentials.json
+credentials.json
