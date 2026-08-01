@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+
 export type UserRole = 'admin' | 'auditor' | 'user';
 
 export interface AuthUser {
@@ -8,6 +10,42 @@ export interface AuthUser {
   role: UserRole;
   full_name?: string;
   department?: string;
+}
+
+// Custom login bypassing Supabase Auth
+export async function customLogin(email: string, password: string) {
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: { message: data.error || 'Login failed' }
+      };
+    }
+
+    // Store user data in localStorage
+    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('logged_in', 'true');
+
+    return {
+      data: { user: data.user },
+      error: null
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: { message: error.message }
+    };
+  }
 }
 
 export async function signUp(email: string, password: string) {
@@ -19,19 +57,29 @@ export async function signUp(email: string, password: string) {
 }
 
 export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  return { data, error };
+  // Use custom login instead of Supabase Auth
+  return customLogin(email, password);
 }
 
 export async function signOut() {
+  localStorage.removeItem('user');
+  localStorage.removeItem('logged_in');
   const { error } = await supabase.auth.signOut();
   return { error };
 }
 
 export async function getCurrentUser() {
+  // Check localStorage first
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      return JSON.parse(storedUser) as AuthUser;
+    } catch (e) {
+      localStorage.removeItem('user');
+    }
+  }
+
+  // Fallback to Supabase
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) return null;

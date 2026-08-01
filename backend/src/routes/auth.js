@@ -1,8 +1,84 @@
 import express from 'express';
 import { z } from 'zod';
 import { getSupabase } from '../config/supabase.js';
+import crypto from 'crypto';
 
 const router = express.Router();
+
+// Simple hash function for storing passwords (use bcrypt in production)
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
+// Custom login endpoint (bypass Supabase Auth)
+router.post('/login', async (req, res) => {
+  try {
+    const supabase = getSupabase();
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password required'
+      });
+    }
+
+    // Get user from users_roles table
+    const { data: user, error: userError } = await supabase
+      .from('users_roles')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (userError || !user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password'
+      });
+    }
+
+    // Get password hash from auth_credentials table
+    const { data: creds, error: credsError } = await supabase
+      .from('auth_credentials')
+      .select('password_hash')
+      .eq('email', email)
+      .single();
+
+    if (credsError || !creds) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password'
+      });
+    }
+
+    // Verify password
+    const passwordHash = hashPassword(password);
+    if (creds.password_hash !== passwordHash) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password'
+      });
+    }
+
+    // Return user data (frontend will store in session/localStorage)
+    res.json({
+      success: true,
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        full_name: user.full_name,
+        department: user.department
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
 
 // Validation schemas
 const SignUpSchema = z.object({

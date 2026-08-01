@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,15 +21,24 @@ export function LoginPage() {
       
       if (signInError) {
         setError(signInError.message);
+        setLoading(false);
         return;
       }
 
-      if (data.session) {
-        navigate('/dashboard');
+      if (data?.user) {
+        // Store user in auth store
+        setUser(data.user);
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 100);
+      } else {
+        setError('Login failed - no user data returned');
+        setLoading(false);
       }
-    } catch (err) {
-      setError('An error occurred during login');
-    } finally {
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during login');
       setLoading(false);
     }
   };

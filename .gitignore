@@ -161,3 +161,14 @@ docs/ALTERNATIVE_LLM_SETUP.md
 .admin-credentials
 admin-credentials.json
 credentials.json
+
+# Setup scripts (contain sensitive operations)
+backend/setup-admin-auth.js
+backend/enable-admin-verification.js
+backend/recreate-admin-user.js
+backend/reset-admin-password.js
+backend/setup-custom-auth.js
+backend/drop-fk.js
+backend/relax-constraint.js
+backend/setup-database.js
+

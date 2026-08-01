@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AuthUser } from '@/services/auth';
-import { onAuthStateChange } from '@/services/auth';
+import { onAuthStateChange, getCurrentUser } from '@/services/auth';
 
 interface AuthStore {
   user: AuthUser | null;
@@ -21,11 +21,30 @@ export const useAuthStore = create<AuthStore>((set) => {
     loading: true,
     error: null,
     
-    setUser: (user) => set({ user }),
+    setUser: (user) => {
+      set({ user, loading: false });
+    },
     setLoading: (loading) => set({ loading }),
     setError: (error) => set({ error }),
     
     initializeAuth: () => {
+      // Check localStorage first
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser) as AuthUser;
+          set({ user, loading: false });
+          return;
+        } catch (e) {
+          localStorage.removeItem('user');
+        }
+      }
+
+      // Then check Supabase
+      getCurrentUser().then((user) => {
+        set({ user, loading: false });
+      });
+
       subscription = onAuthStateChange((user) => {
         set({ user, loading: false });
       });
