@@ -10,8 +10,9 @@ from app.models import PurchaseLedger, VendorMaster
 
 def init_db():
     """Create all tables"""
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
-    print("✅ Database schema created")
+    print("[OK] Database schema created")
 
 
 def import_ledger_csv(csv_path: str = "data/purchase_ledger.csv"):
@@ -36,12 +37,12 @@ def import_ledger_csv(csv_path: str = "data/purchase_ledger.csv"):
                 db.add(ledger)
                 count += 1
             db.commit()
-            print(f"✅ Imported {count} ledger entries")
+            print(f"[OK] Imported {count} ledger entries")
     except FileNotFoundError:
-        print(f"⚠️  CSV not found: {csv_path}. Creating sample data...")
+        print(f"[WARN] CSV not found: {csv_path}. Creating sample data...")
         create_sample_ledger(db)
     except Exception as e:
-        print(f"❌ Error importing ledger: {e}")
+        print(f"[ERROR] Error importing ledger: {e}")
         db.rollback()
     finally:
         db.close()
@@ -75,10 +76,10 @@ def import_vendor_csv(csv_path: str = "data/vendor_master.csv"):
             db.commit()
             print(f"✅ Imported {count} vendor records")
     except FileNotFoundError:
-        print(f"⚠️  CSV not found: {csv_path}. Creating sample data...")
+        print(f"[WARN] CSV not found: {csv_path}. Creating sample data...")
         create_sample_vendors(db)
     except Exception as e:
-        print(f"❌ Error importing vendors: {e}")
+        print(f"[ERROR] Error importing vendors: {e}")
         db.rollback()
     finally:
         db.close()
@@ -96,9 +97,13 @@ def create_sample_ledger(db: Session):
     
     for i in range(20):
         idx = i % len(sample_ledgers)
+        iteration = i // len(sample_ledgers)
         base = sample_ledgers[idx].copy()
-        base["po_number"] = f"{base['po_number']}-{i//len(sample_ledgers)+1:03d}"
-        base["invoice_number"] = f"{base['invoice_number']}-{i//len(sample_ledgers)+1:03d}"
+        
+        # Generate unique PO and invoice numbers
+        suffix = f"{iteration:03d}"
+        base["po_number"] = f"{base['po_number']}-{suffix}"
+        base["invoice_number"] = f"{base['invoice_number']}-{suffix}"
         
         ledger = PurchaseLedger(
             id=str(uuid.uuid4()),
@@ -114,32 +119,38 @@ def create_sample_ledger(db: Session):
         db.add(ledger)
     
     db.commit()
-    print(f"✅ Created {len(sample_ledgers) * 4} sample ledger entries")
+    print(f"[OK] Created 20 sample ledger entries")
 
 
 def create_sample_vendors(db: Session):
     """Create sample vendor master data"""
     sample_vendors = [
-        {"vendor_name": "ABC Supplies Ltd", "vendor_code": "VENDOR-ABC-001", "gst_number": "29ABCDE1234F1Z5", "pan_number": "ABCDE1234F", "email": "contact@abcsupplies.com", "phone": "+91-9876543210", "address": "123 Industrial Area, Phase 2", "city": "Bangalore", "state": "Karnataka", "is_suspicious": False},
-        {"vendor_name": "XYZ Technologies", "vendor_code": "VENDOR-XYZ-002", "gst_number": "27XYZTE5678G2Z6", "pan_number": "XYZTE5678G", "email": "sales@xyztech.com", "phone": "+91-8765432109", "address": "456 Tech Park, Whitefield", "city": "Bangalore", "state": "Karnataka", "is_suspicious": False},
-        {"vendor_name": "Mega Corp Solutions", "vendor_code": "VENDOR-MEG-003", "gst_number": "09MEGAC9012H3Z7", "pan_number": "MEGAC9012H", "email": "info@megacorp.com", "phone": "+91-7654321098", "address": "789 Business District", "city": "Lucknow", "state": "Uttar Pradesh", "is_suspicious": False},
-        {"vendor_name": "Global Traders Inc", "vendor_code": "VENDOR-GLB-004", "gst_number": "33GLOBA3456I4Z8", "pan_number": "GLOBA3456I", "email": "trade@globaltraders.com", "phone": "+91-6543210987", "address": "321 Export Zone", "city": "Chennai", "state": "Tamil Nadu", "is_suspicious": False},
-        {"vendor_name": "Prime Vendors Co", "vendor_code": "VENDOR-PRM-005", "gst_number": "07PRIME7890J5Z9", "pan_number": "PRIME7890J", "email": "orders@primevendors.com", "phone": "+91-5432109876", "address": "555 Industrial Estate", "city": "Delhi", "state": "Delhi", "is_suspicious": True},
-        {"vendor_name": "Suspect Vendor Ltd", "vendor_code": "VENDOR-SUS-006", "gst_number": "29SUSPE1111K1Z1", "pan_number": "SUSPE1111K", "email": "fake@suspect.com", "phone": "+91-9999999999", "address": "Unknown Location", "city": "Unknown", "state": "Unknown", "is_suspicious": True},
+        {"vendor_name": "ABC Supplies Ltd", "vendor_code": "VENDOR-ABC-001", "gst_base": "29ABCDE1234F1Z", "pan_number": "ABCDE1234F", "email": "contact@abcsupplies.com", "phone": "+91-9876543210", "address": "123 Industrial Area, Phase 2", "city": "Bangalore", "state": "Karnataka", "is_suspicious": False},
+        {"vendor_name": "XYZ Technologies", "vendor_code": "VENDOR-XYZ-002", "gst_base": "27XYZTE5678G2Z", "pan_number": "XYZTE5678G", "email": "sales@xyztech.com", "phone": "+91-8765432109", "address": "456 Tech Park, Whitefield", "city": "Bangalore", "state": "Karnataka", "is_suspicious": False},
+        {"vendor_name": "Mega Corp Solutions", "vendor_code": "VENDOR-MEG-003", "gst_base": "09MEGAC9012H3Z", "pan_number": "MEGAC9012H", "email": "info@megacorp.com", "phone": "+91-7654321098", "address": "789 Business District", "city": "Lucknow", "state": "Uttar Pradesh", "is_suspicious": False},
+        {"vendor_name": "Global Traders Inc", "vendor_code": "VENDOR-GLB-004", "gst_base": "33GLOBA3456I4Z", "pan_number": "GLOBA3456I", "email": "trade@globaltraders.com", "phone": "+91-6543210987", "address": "321 Export Zone", "city": "Chennai", "state": "Tamil Nadu", "is_suspicious": False},
+        {"vendor_name": "Prime Vendors Co", "vendor_code": "VENDOR-PRM-005", "gst_base": "07PRIME7890J5Z", "pan_number": "PRIME7890J", "email": "orders@primevendors.com", "phone": "+91-5432109876", "address": "555 Industrial Estate", "city": "Delhi", "state": "Delhi", "is_suspicious": True},
+        {"vendor_name": "Suspect Vendor Ltd", "vendor_code": "VENDOR-SUS-006", "gst_base": "29SUSPE1111K1Z", "pan_number": "SUSPE1111K", "email": "fake@suspect.com", "phone": "+91-9999999999", "address": "Unknown Location", "city": "Unknown", "state": "Unknown", "is_suspicious": True},
     ]
     
     for i in range(30):
         idx = i % len(sample_vendors)
         base = sample_vendors[idx].copy()
-        if i >= len(sample_vendors):
-            base["vendor_name"] = f"{base['vendor_name']} {i//len(sample_vendors)+1}"
-            base["vendor_code"] = f"{base['vendor_code']}-{i//len(sample_vendors)+1}"
+        iteration = i // len(sample_vendors)
+        
+        # Generate unique GST by varying the last character
+        gst_suffix = chr(ord('5') + iteration) if iteration < 10 else chr(ord('A') + iteration - 10)
+        gst_number = base["gst_base"] + gst_suffix
+        
+        if iteration > 0:
+            base["vendor_name"] = f"{base['vendor_name']} {iteration+1}"
+            base["vendor_code"] = f"{base['vendor_code']}-{iteration+1}"
         
         vendor = VendorMaster(
             id=str(uuid.uuid4()),
             vendor_name=base["vendor_name"],
             vendor_code=base["vendor_code"],
-            gst_number=base["gst_number"],
+            gst_number=gst_number,
             pan_number=base["pan_number"],
             email=base["email"],
             phone=base["phone"],
@@ -153,12 +164,12 @@ def create_sample_vendors(db: Session):
         db.add(vendor)
     
     db.commit()
-    print(f"✅ Created {len(sample_vendors) * 5} sample vendor records")
+    print(f"[OK] Created 30 sample vendor records")
 
 
 if __name__ == "__main__":
-    print("🔄 Initializing database...")
+    print("[INIT] Initializing database...")
     init_db()
     import_ledger_csv()
     import_vendor_csv()
-    print("✅ Database initialization complete!")
+    print("[OK] Database initialization complete!")
