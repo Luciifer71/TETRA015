@@ -5,11 +5,11 @@ import {
   LayoutDashboard,
   UploadCloud,
   FileSpreadsheet,
-  ShieldCheck,
   History,
   Settings,
   Sparkles,
   ChevronLeft,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -28,12 +28,23 @@ export const Sidebar: React.FC = () => {
       initial={false}
       animate={{ width: collapsed ? 80 : 256 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="relative flex flex-col h-screen bg-white dark:bg-[#10120D]/95 border-r border-slate-200 dark:border-[#263C49] z-30 select-none overflow-hidden shrink-0 backdrop-blur-xl"
+      className="relative flex flex-col h-screen bg-white dark:bg-[#10120D]/95 border-r border-slate-200 dark:border-[#263C49] z-30 select-none shrink-0 backdrop-blur-xl"
     >
+      {/* Floating Toggle Button on Border Edge */}
+      <motion.button
+        onClick={() => setCollapsed(!collapsed)}
+        animate={{ rotate: collapsed ? 180 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="absolute -right-3.5 top-6 z-40 p-1.5 rounded-full bg-white dark:bg-[#263C49] text-slate-700 dark:text-[#DFE0E2] hover:text-amber-600 dark:hover:text-yellow-400 hover:bg-slate-100 dark:hover:bg-[#344e5f] transition-all border border-slate-300 dark:border-[#344e5f] shadow-md hover:scale-110"
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        <ChevronLeft className="w-3.5 h-3.5" />
+      </motion.button>
+
       {/* Brand Header */}
-      <div className="flex items-center h-20 px-4 border-b border-slate-200 dark:border-[#263C49] relative">
+      <div className={`flex items-center ${collapsed ? 'justify-center px-0' : 'px-5'} h-20 border-b border-slate-200 dark:border-[#263C49]`}>
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 via-yellow-500 to-amber-600 text-zinc-950 shadow-gold-md shrink-0 font-bold">
+          <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 via-yellow-500 to-amber-600 text-zinc-950 shadow-md shrink-0 font-bold">
             <ShieldCheck className="w-6 h-6 text-zinc-950" />
           </div>
           
@@ -56,17 +67,6 @@ export const Sidebar: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Smooth Floating Toggle Button */}
-        <motion.button
-          onClick={() => setCollapsed(!collapsed)}
-          animate={{ rotate: collapsed ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="absolute right-3 p-1.5 rounded-xl bg-slate-100 dark:bg-[#263C49] text-slate-700 dark:text-[#DFE0E2] hover:text-amber-600 dark:hover:text-yellow-400 hover:bg-slate-200 dark:hover:bg-[#344e5f] transition-colors border border-slate-300 dark:border-[#344e5f] shadow-sm"
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </motion.button>
       </div>
 
       {/* Navigation Menu */}
@@ -79,7 +79,7 @@ export const Sidebar: React.FC = () => {
             className={({ isActive }) =>
               `flex items-center ${collapsed ? 'justify-center px-0' : 'px-3.5'} py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
                 isActive
-                  ? 'bg-[#263C49] text-yellow-400 border border-[#344e5f] shadow-gold-md font-bold'
+                  ? 'bg-[#263C49] text-yellow-400 border border-[#344e5f] shadow-md font-bold'
                   : 'text-slate-700 dark:text-[#AAABB0] hover:text-slate-950 dark:hover:text-[#DFE0E2] hover:bg-slate-100 dark:hover:bg-[#263C49]/60'
               }`
             }
@@ -111,7 +111,7 @@ export const Sidebar: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="p-4 rounded-2xl bg-slate-100 dark:bg-[#263C49] border border-amber-500/30 shadow-gold-glow"
+              className="p-4 rounded-2xl bg-slate-100 dark:bg-[#263C49] border border-amber-500/30 shadow-sm"
             >
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
@@ -129,3 +129,4 @@ export const Sidebar: React.FC = () => {
     </motion.aside>
   );
 };
+

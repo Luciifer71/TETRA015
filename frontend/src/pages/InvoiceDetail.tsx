@@ -42,13 +42,13 @@ export const InvoiceDetailPage: React.FC = () => {
             Back to Repository
           </Button>
 
-          <div className="flex items-center gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800">
+          <div className="flex items-center gap-2 bg-slate-200 dark:bg-[#10120D] p-1.5 rounded-2xl border border-slate-300 dark:border-[#263C49]">
             <button
               onClick={() => setActiveTab('overview')}
               className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
                 activeTab === 'overview'
-                  ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-amber-500 text-zinc-950 shadow-md font-extrabold'
+                  : 'text-slate-700 dark:text-[#AAABB0] hover:text-slate-950 dark:hover:text-white'
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -58,8 +58,8 @@ export const InvoiceDetailPage: React.FC = () => {
               onClick={() => setActiveTab('audit')}
               className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
                 activeTab === 'audit'
-                  ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-amber-500 text-zinc-950 shadow-md font-extrabold'
+                  : 'text-slate-700 dark:text-[#AAABB0] hover:text-slate-950 dark:hover:text-white'
               }`}
             >
               <History className="w-3.5 h-3.5" />

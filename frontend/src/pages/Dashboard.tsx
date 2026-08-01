@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { MetricCard } from '../components/molecules/MetricCard';
 import { RiskDistributionChart } from '../components/organisms/RiskDistributionChart';
 import { VendorAnalyticsChart } from '../components/organisms/VendorAnalyticsChart';
 import { InvoiceVolumeTrendChart } from '../components/organisms/InvoiceVolumeTrendChart';
 import { InvoiceTable } from '../components/organisms/InvoiceTable';
+import { QuickInvoiceDrawer } from '../components/organisms/QuickInvoiceDrawer';
 import { FilterBar } from '../components/molecules/FilterBar';
 import { useInvoiceStore } from '../store/useInvoiceStore';
 import { FileCheck, ShieldAlert, Clock, Sparkles } from 'lucide-react';
+import { Invoice } from '../types/invoice';
 
 export const Dashboard: React.FC = () => {
   const { invoices, summary, searchQuery, selectedRiskFilter, selectedStatusFilter } = useInvoiceStore();
+  const [selectedDrawerInvoice, setSelectedDrawerInvoice] = useState<Invoice | null>(null);
 
   const filteredInvoices = invoices.filter((inv) => {
     const matchesSearch =
@@ -37,34 +40,34 @@ export const Dashboard: React.FC = () => {
           value={summary.totalAudited}
           change="+14.2% vs last month"
           isPositive={true}
-          icon={<FileCheck className="w-6 h-6 text-emerald-400" />}
-          iconBgColor="bg-emerald-500/10"
+          icon={<FileCheck className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />}
+          iconBgColor="bg-emerald-500/15"
         />
         <MetricCard
           title="Processed Volume"
           value={formatCurrency(summary.totalAmountProcessed)}
           subtitle="97.8% AI Accuracy Rate"
-          icon={<Sparkles className="w-6 h-6 text-teal-400" />}
-          iconBgColor="bg-teal-500/10"
+          icon={<Sparkles className="w-6 h-6 text-teal-500 dark:text-teal-400" />}
+          iconBgColor="bg-teal-500/15"
         />
         <MetricCard
           title="High / Critical Risk"
           value={summary.highRiskCount}
           change="-4.5% risk reduction"
           isPositive={true}
-          icon={<ShieldAlert className="w-6 h-6 text-rose-400" />}
-          iconBgColor="bg-rose-500/10"
+          icon={<ShieldAlert className="w-6 h-6 text-rose-500 dark:text-rose-400" />}
+          iconBgColor="bg-rose-500/15"
         />
         <MetricCard
           title="Pending Auditor Review"
           value={summary.pendingReviewCount}
           subtitle={`${summary.timeSavedHours} Hours Saved`}
-          icon={<Clock className="w-6 h-6 text-amber-400" />}
-          iconBgColor="bg-amber-500/10"
+          icon={<Clock className="w-6 h-6 text-amber-500 dark:text-amber-400" />}
+          iconBgColor="bg-amber-500/15"
         />
       </div>
 
-      {/* Pop-up Graphs Grid (Nixtio HR Dashboard Style) */}
+      {/* Pop-up Graphs Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <InvoiceVolumeTrendChart />
@@ -81,13 +84,29 @@ export const Dashboard: React.FC = () => {
       {/* Filter Bar & Recent Invoices Table */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-zinc-900 dark:text-white">Recent Invoice Audits</h2>
-          <span className="text-xs text-zinc-400">Live AI Risk Scoring System</span>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-black text-slate-950 dark:text-white tracking-tight">Recent Invoice Audits</h2>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/15 text-amber-600 dark:text-yellow-400 border border-amber-500/30">
+              Live AI Scoring
+            </span>
+          </div>
+          <span className="text-xs font-semibold text-slate-500 dark:text-[#A4A6A8]">Click any row for quick AI risk inspection</span>
         </div>
 
         <FilterBar />
-        <InvoiceTable invoices={filteredInvoices} pageSize={6} />
+        <InvoiceTable
+          invoices={filteredInvoices}
+          pageSize={6}
+          onQuickInspect={(inv) => setSelectedDrawerInvoice(inv)}
+        />
       </div>
+
+      {/* Slide-over Quick Drawer */}
+      <QuickInvoiceDrawer
+        invoice={selectedDrawerInvoice}
+        onClose={() => setSelectedDrawerInvoice(null)}
+      />
     </AppLayout>
   );
 };
+

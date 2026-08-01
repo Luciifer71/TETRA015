@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { FilterBar } from '../components/molecules/FilterBar';
 import { InvoiceTable } from '../components/organisms/InvoiceTable';
+import { QuickInvoiceDrawer } from '../components/organisms/QuickInvoiceDrawer';
 import { useInvoiceStore } from '../store/useInvoiceStore';
 import { FileSpreadsheet, Sparkles } from 'lucide-react';
+import { Invoice } from '../types/invoice';
 
 export const InvoiceListPage: React.FC = () => {
   const { invoices, searchQuery, selectedRiskFilter, selectedStatusFilter } = useInvoiceStore();
+  const [selectedDrawerInvoice, setSelectedDrawerInvoice] = useState<Invoice | null>(null);
 
   const filteredInvoices = invoices.filter((inv) => {
     const matchesSearch =
@@ -41,8 +44,18 @@ export const InvoiceListPage: React.FC = () => {
         </div>
 
         <FilterBar />
-        <InvoiceTable invoices={filteredInvoices} pageSize={10} />
+        <InvoiceTable
+          invoices={filteredInvoices}
+          pageSize={10}
+          onQuickInspect={(inv) => setSelectedDrawerInvoice(inv)}
+        />
+
+        <QuickInvoiceDrawer
+          invoice={selectedDrawerInvoice}
+          onClose={() => setSelectedDrawerInvoice(null)}
+        />
       </div>
     </AppLayout>
   );
 };
+
