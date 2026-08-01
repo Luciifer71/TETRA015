@@ -141,6 +141,64 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// Setup admin
+router.post('/setup-admin', async (req, res) => {
+  try {
+    if (process.env.ENABLE_SETUP_ADMIN === 'false') {
+      return res.status(403).json({
+        success: false,
+        error: 'Setup admin route is disabled.'
+      });
+    }
+
+    const supabase = getSupabase();
+    const { email, password, full_name } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password are required'
+      });
+    }
+
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (authError && !authError.message.includes('already registered')) {
+      throw authError;
+    }
+
+    const userId = authData?.user?.id;
+
+    const { data, error: roleError } = await supabase
+      .from('users_roles')
+      .upsert({
+        auth_id: userId,
+        email,
+        role: 'admin',
+        full_name: full_name || 'System Administrator',
+        is_active: true
+      }, { onConflict: 'email' })
+      .select();
+
+    if (roleError) throw roleError;
+
+    res.json({
+      success: true,
+      message: 'Admin account setup completed',
+      email,
+      user_id: userId
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
 // Assign role
 router.post('/assign-role', async (req, res) => {
   try {

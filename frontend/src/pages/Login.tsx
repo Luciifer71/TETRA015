@@ -99,6 +99,15 @@ export function LoginPage() {
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
+
+          <div className="text-center mt-4">
+            <a
+              href="/setup-admin"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              First time? Set up your Admin Account →
+            </a>
+          </div>
         </form>
       </div>
     </div>

@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
+  origin: process.env.CORS_ORIGINS ? JSON.parse(process.env.CORS_ORIGINS) : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:8000', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -27,6 +27,18 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/invoices', invoiceRoutes);
+
+app.get('/api/v1', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'InvoiceGuard AI API v1',
+    endpoints: {
+      auth: '/api/v1/auth',
+      invoices: '/api/v1/invoices',
+      health: '/health'
+    }
+  });
+});
 
 // Health check
 app.get('/health', (req, res) => {
@@ -40,9 +52,9 @@ app.get('/', (req, res) => {
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
