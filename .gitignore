@@ -143,4 +143,5 @@ backend/data/sample_invoices/
 
 # Documentation (local only)
 docs/
+*.md
 *.local.md
