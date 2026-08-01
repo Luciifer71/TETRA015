@@ -28,11 +28,11 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card variant="glass" hoverEffect className="relative overflow-hidden group border border-slate-200 dark:border-[#344e5f] hover:border-amber-500/50 dark:hover:border-amber-500/50">
+      <Card variant="glass" hoverEffect className="relative overflow-hidden group border border-[#D0D0D2] dark:border-[#8D9797]/25 hover:border-[#BCBCBE] dark:hover:border-slate-400/50">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-black text-slate-700 dark:text-[#CBCDD0] uppercase tracking-wider">{title}</p>
-            <h3 className="text-2xl font-black text-slate-950 dark:text-[#DFE0E2] mt-2 tracking-tight group-hover:text-amber-600 dark:group-hover:text-yellow-400 transition-colors">
+            <p className="text-xs font-bold text-[#4B4C51] dark:text-slate-400 uppercase tracking-wider">{title}</p>
+            <h3 className="text-2xl font-black text-[#2E2E2D] dark:text-white mt-2 tracking-tight transition-colors">
               {value}
             </h3>
           </div>
@@ -41,14 +41,14 @@ export const MetricCard: React.FC<MetricCardProps> = ({
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between text-xs pt-3 border-t border-slate-200 dark:border-[#344e5f]">
+        <div className="mt-4 flex items-center justify-between text-xs pt-3 border-t border-[#D0D0D2]/60 dark:border-white/10">
           {change && (
-            <div className={`flex items-center font-extrabold gap-1 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+            <div className={`flex items-center font-bold gap-1 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
               {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
               <span>{change}</span>
             </div>
           )}
-          {subtitle && <span className="font-semibold text-slate-500 dark:text-[#A4A6A8]">{subtitle}</span>}
+          {subtitle && <span className="font-medium text-[#4B4C51] dark:text-slate-400">{subtitle}</span>}
         </div>
       </Card>
     </motion.div>

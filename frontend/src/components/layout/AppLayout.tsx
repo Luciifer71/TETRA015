@@ -24,7 +24,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
   }, [darkMode]);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-100 dark:bg-gradient-to-br dark:from-[#10120D] dark:via-[#172630] dark:to-[#263C49] dark:bg-fixed text-slate-950 dark:text-[#DFE0E2] antialiased transition-colors duration-300">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-100 dark:bg-[linear-gradient(to_right,#000000_0%,#08080a_25%,#101014_55%,#18181c_80%,#222226_100%)] dark:bg-fixed text-slate-950 dark:text-[#F3DDB6] antialiased transition-colors duration-300">
       <Sidebar />
       <div className="flex flex-col flex-1 h-full overflow-hidden">
         <Header title={title} />

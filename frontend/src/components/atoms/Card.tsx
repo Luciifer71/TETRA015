@@ -15,13 +15,13 @@ export const Card: React.FC<CardProps> = ({
   const baseStyles = 'rounded-2xl p-6 transition-all duration-300';
 
   const variantStyles = {
-    default: 'bg-white dark:bg-[#263C49] border border-slate-300 dark:border-[#344e5f] shadow-md dark:shadow-2xl',
-    glass: 'bg-white/95 dark:bg-[#263C49]/90 backdrop-blur-xl border border-slate-300 dark:border-[#344e5f] shadow-lg dark:shadow-2xl',
-    outline: 'bg-transparent border border-slate-300 dark:border-[#344e5f]',
+    default: 'bg-white dark:bg-[#1a1a1e] border border-[#D0D0D2] dark:border-[#8D9797]/25 shadow-sm dark:shadow-2xl text-[#2E2E2D] dark:text-white',
+    glass: 'bg-white/95 dark:bg-[#1c1c22] border border-[#D0D0D2] dark:border-[#8D9797]/30 shadow-sm dark:shadow-2xl text-[#2E2E2D] dark:text-white',
+    outline: 'bg-transparent border border-[#D0D0D2] dark:border-[#8D9797]/25 text-[#2E2E2D] dark:text-white',
   };
 
   const hoverStyles = hoverEffect
-    ? 'hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-2xl hover:border-amber-500/50 dark:hover:border-amber-500/50'
+    ? 'hover:-translate-y-1 hover:shadow-md dark:hover:shadow-2xl hover:border-[#BCBCBE] dark:hover:border-[#8D9797]/60'
     : '';
 
   return (

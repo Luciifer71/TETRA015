@@ -51,30 +51,30 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
   };
 
   return (
-    <div className="flex flex-col w-full bg-white dark:bg-[#263C49] backdrop-blur-xl border border-slate-200 dark:border-[#344e5f] rounded-2xl overflow-hidden shadow-lg dark:shadow-2xl">
+    <div className="flex flex-col w-full bg-white dark:bg-[#1c1c22] backdrop-blur-xl border border-[#D0D0D2] dark:border-[#8D9797]/25 rounded-2xl overflow-hidden shadow-sm dark:shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-sm">
           <thead>
-            <tr className="bg-slate-100 dark:bg-[#10120D] border-b border-slate-200 dark:border-[#344e5f] text-xs font-black text-slate-800 dark:text-[#DFE0E2] uppercase tracking-wider select-none">
-              <th className="py-4 px-6 cursor-pointer hover:text-amber-600 dark:hover:text-yellow-400" onClick={() => handleSort('invoiceNumber')}>
+            <tr className="bg-[#F3F3F3] dark:bg-[#121215] border-b border-[#D0D0D2] dark:border-white/10 text-xs font-bold text-[#2E2E2D] dark:text-[#F3DDB6] uppercase tracking-wider select-none">
+              <th className="py-4 px-6 cursor-pointer hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6]" onClick={() => handleSort('invoiceNumber')}>
                 <div className="flex items-center gap-1.5">
                   <span>Invoice #</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer hover:text-amber-600 dark:hover:text-yellow-400" onClick={() => handleSort('vendorName')}>
+              <th className="py-4 px-6 cursor-pointer hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6]" onClick={() => handleSort('vendorName')}>
                 <div className="flex items-center gap-1.5">
                   <span>Vendor</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer hover:text-amber-600 dark:hover:text-yellow-400 text-right" onClick={() => handleSort('totalAmount')}>
+              <th className="py-4 px-6 cursor-pointer hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6] text-right" onClick={() => handleSort('totalAmount')}>
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Total Amount</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer hover:text-amber-600 dark:hover:text-yellow-400 text-center" onClick={() => handleSort('riskScore')}>
+              <th className="py-4 px-6 cursor-pointer hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6] text-center" onClick={() => handleSort('riskScore')}>
                 <div className="flex items-center justify-center gap-1.5">
                   <span>Risk Score</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
@@ -84,10 +84,10 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
               <th className="py-4 px-6 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-[#344e5f]/60 bg-white dark:bg-[#263C49]">
+          <tbody className="divide-y divide-[#D0D0D2]/50 dark:divide-white/10 bg-white dark:bg-[#1c1c22]">
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-slate-500 dark:text-[#AAABB0] font-bold">
+                <td colSpan={6} className="py-12 text-center text-[#4B4C51] dark:text-[#7E7E7E] font-bold">
                   No matching invoices found.
                 </td>
               </tr>
@@ -95,7 +95,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
               paginated.map((inv) => (
                 <tr
                   key={inv.id}
-                  className="hover:bg-amber-500/5 dark:hover:bg-[#344e5f]/60 transition-colors group cursor-pointer"
+                  className="hover:bg-[#BCBCBE]/15 dark:hover:bg-white/5 transition-colors group cursor-pointer"
                   onClick={() => {
                     if (onQuickInspect) {
                       onQuickInspect(inv);
@@ -105,24 +105,24 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
                     }
                   }}
                 >
-                  <td className="py-4 px-6 font-extrabold text-slate-950 dark:text-[#DFE0E2] group-hover:text-amber-600 dark:group-hover:text-yellow-400">
+                  <td className="py-4 px-6 font-bold text-[#2E2E2D] dark:text-[#F3DDB6] group-hover:text-[#4B4C51] dark:group-hover:text-[#F3DDB6]">
                     {inv.invoiceNumber}
-                    <div className="text-[11px] font-semibold text-slate-500 dark:text-[#AAABB0]">{inv.invoiceDate}</div>
+                    <div className="text-[11px] font-normal text-[#4B4C51] dark:text-[#7E7E7E]">{inv.invoiceDate}</div>
                   </td>
                   <td className="py-4 px-6">
-                    <div className="font-extrabold text-slate-900 dark:text-[#DFE0E2]">{inv.vendorName}</div>
-                    <div className="text-[11px] font-mono font-bold text-slate-500 dark:text-[#AAABB0]">{inv.vendorGstin}</div>
+                    <div className="font-bold text-[#2E2E2D] dark:text-[#F3DDB6]">{inv.vendorName}</div>
+                    <div className="text-[11px] font-mono font-medium text-[#4B4C51] dark:text-[#7E7E7E]">{inv.vendorGstin}</div>
                   </td>
-                  <td className="py-4 px-6 text-right font-black text-slate-950 dark:text-[#DFE0E2]">
+                  <td className="py-4 px-6 text-right font-black text-[#2E2E2D] dark:text-[#F3DDB6]">
                     {formatCurrency(inv.totalAmount)}
                   </td>
                   <td className="py-4 px-6 text-center">
                     <div className="inline-flex flex-col items-center">
                       <Badge type="risk" value={inv.riskLevel} size="sm" />
-                      <div className="w-20 bg-slate-200 dark:bg-[#10120D] h-1.5 rounded-full mt-1.5 overflow-hidden">
+                      <div className="w-20 bg-[#D0D0D2]/40 dark:bg-white/10 h-1.5 rounded-full mt-1.5 overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
-                            inv.riskScore >= 70 ? 'bg-rose-500' : inv.riskScore >= 35 ? 'bg-amber-500' : 'bg-emerald-500'
+                            inv.riskScore >= 70 ? 'bg-rose-500' : inv.riskScore >= 35 ? 'bg-amber-400' : 'bg-emerald-500'
                           }`}
                           style={{ width: `${inv.riskScore}%` }}
                         />
@@ -138,9 +138,9 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
                         <button
                           onClick={() => onQuickInspect(inv)}
                           title="Quick AI Risk Drawer"
-                          className="p-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-yellow-400 hover:bg-amber-500/20 transition-colors border border-amber-500/30 flex items-center gap-1 text-xs font-bold"
+                          className="p-1.5 rounded-xl bg-[#F3F3F3] dark:bg-white/5 text-[#2E2E2D] dark:text-[#F3DDB6] hover:bg-[#D0D0D2] dark:hover:bg-white/15 transition-colors border border-[#D0D0D2] dark:border-white/10 flex items-center gap-1 text-xs font-bold"
                         >
-                          <Sparkles className="w-3.5 h-3.5" />
+                          <Sparkles className="w-3.5 h-3.5 text-[#4B4C51] dark:text-[#F3DDB6]" />
                           <span className="hidden lg:inline">Inspect</span>
                         </button>
                       )}
@@ -153,7 +153,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
                           navigate(`/invoices/${inv.id}`);
                         }}
                       >
-                        <Eye className="w-4 h-4 text-slate-500 dark:text-[#AAABB0] hover:text-slate-950 dark:hover:text-white" />
+                        <Eye className="w-4 h-4 text-[#4B4C51] dark:text-[#7E7E7E] hover:text-[#2E2E2D] dark:hover:text-[#F3DDB6]" />
                       </Button>
                       {inv.status !== 'APPROVED' && (
                         <Button
@@ -185,7 +185,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex items-center justify-between px-6 py-4 bg-slate-100 dark:bg-[#10120D] border-t border-slate-200 dark:border-[#344e5f] text-xs font-extrabold text-slate-800 dark:text-[#DFE0E2]">
+      <div className="flex items-center justify-between px-6 py-4 bg-[#F3F3F3] dark:bg-[#121215] border-t border-[#D0D0D2] dark:border-white/10 text-xs font-bold text-[#2E2E2D] dark:text-[#F3DDB6]">
         <span>
           Showing {paginated.length > 0 ? (currentPage - 1) * pageSize + 1 : 0} to{' '}
           {Math.min(currentPage * pageSize, sortedInvoices.length)} of {sortedInvoices.length} Invoices

@@ -42,7 +42,7 @@ export const FilterBar: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-[#263C49] border border-slate-300 dark:border-[#344e5f] rounded-2xl shadow-md dark:shadow-2xl space-y-4">
+    <div className="p-4 bg-white dark:bg-[#1c1c22] border border-slate-300 dark:border-[#8D9797]/25 rounded-2xl shadow-md dark:shadow-2xl space-y-4">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search Bar */}
         <div className="w-full md:flex-1">
@@ -50,7 +50,7 @@ export const FilterBar: React.FC = () => {
             placeholder="Search by Invoice #, Vendor Name, or GSTIN..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            leftIcon={<Search className="w-4 h-4 text-slate-500 dark:text-[#AAABB0]" />}
+            leftIcon={<Search className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
           />
         </div>
 
@@ -79,7 +79,7 @@ export const FilterBar: React.FC = () => {
               size="md"
               onClick={resetFilters}
               leftIcon={<RotateCcw className="w-4 h-4" />}
-              className="shrink-0 w-full sm:w-auto border-slate-300 dark:border-[#344e5f] text-slate-800 dark:text-[#DFE0E2] hover:bg-slate-100 dark:hover:bg-[#344e5f]"
+              className="shrink-0 w-full sm:w-auto border-slate-300 dark:border-white/10 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
             >
               Reset
             </Button>

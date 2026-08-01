@@ -4,27 +4,28 @@
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
   }
   
   html.dark body {
-    background: linear-gradient(135deg, #10120D 0%, #172630 50%, #263C49 100%);
+    background: linear-gradient(to right, #000000 0%, #08080a 25%, #101014 55%, #18181c 80%, #222226 100%);
     background-attachment: fixed;
-    color: #DFE0E2;
+    color: #F3DDB6;
   }
 
   html.light body {
-    background: #f8fafc;
-    color: #0f172a;
+    background: #F3F3F3;
+    color: #2E2E2D;
   }
 }
 
-/* Glassmorphism Utilities */
+/* Glassmorphism & Glossy Black Utilities */
 .dark .glass-panel {
-  background: rgba(38, 60, 73, 0.75);
+  background: rgba(18, 18, 21, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(203, 205, 208, 0.15);
+  border: 1px solid rgba(141, 151, 151, 0.25);
+  box-shadow: inset 0 1px 1px 0 rgba(141, 151, 151, 0.2), 0 20px 40px -15px rgba(0, 0, 0, 0.8);
 }
 
 .light .glass-panel {
@@ -35,11 +36,11 @@
 }
 
 .dark .glass-card {
-  background: rgba(38, 60, 73, 0.65);
+  background: linear-gradient(135deg, rgba(141, 151, 151, 0.08) 0%, rgba(18, 18, 21, 0.9) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(203, 205, 208, 0.15);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(141, 151, 151, 0.2);
+  box-shadow: inset 0 1px 0 0 rgba(141, 151, 151, 0.25), 0 10px 30px -10px rgba(0, 0, 0, 0.9);
 }
 
 .light .glass-card {
@@ -61,12 +62,12 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #263C49;
+  background: #484848;
   border-radius: 9999px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #344e5f;
+  background: #7E7E7E;
 }
 
 .light ::-webkit-scrollbar-thumb {
