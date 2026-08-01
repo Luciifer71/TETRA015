@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card } from '../atoms/Card';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useInvoiceStore } from '../../store/useInvoiceStore';
@@ -8,19 +8,41 @@ import { motion } from 'framer-motion';
 export const VendorAnalyticsChart: React.FC = () => {
   const { vendorStats, darkMode } = useInvoiceStore();
   const [activeTab, setActiveTab] = useState<'all' | 'high_risk'>('all');
+  const [isShrinking, setIsShrinking] = useState(false);
+  const shrinkTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleTabChange = (tab: 'all' | 'high_risk') => {
+    if (tab === activeTab) return;
+    if (shrinkTimerRef.current) clearTimeout(shrinkTimerRef.current);
+
+    if (tab === 'high_risk') {
+      setActiveTab('high_risk');
+      setIsShrinking(true);
+      shrinkTimerRef.current = setTimeout(() => {
+        setIsShrinking(false);
+      }, 240);
+    } else {
+      setIsShrinking(false);
+      setActiveTab('all');
+    }
+  };
 
   const safeVendorStats = vendorStats || [];
-  const filteredStats = activeTab === 'high_risk'
+  const currentStats = (activeTab === 'high_risk' && !isShrinking)
     ? safeVendorStats.filter((v) => v.riskScore >= 40)
     : safeVendorStats;
 
-  const formattedData = filteredStats.map((v) => ({
-    fullName: v.vendorName,
-    name: v.vendorName,
-    SpendInLakhs: Number((v.totalSpend / 100000).toFixed(1)),
-    RiskScore: v.riskScore,
-    status: v.status,
-  }));
+  const formattedData = currentStats.map((v) => {
+    const isFlagged = v.riskScore >= 40;
+    const hideValues = activeTab === 'high_risk' && isShrinking && !isFlagged;
+    return {
+      fullName: v.vendorName,
+      name: hideValues ? '' : v.vendorName,
+      SpendInLakhs: hideValues ? 0 : Number((v.totalSpend / 100000).toFixed(1)),
+      RiskScore: hideValues ? 0 : v.riskScore,
+      status: v.status,
+    };
+  });
 
   const CustomXAxisTick = ({ x, y, payload }: any) => {
     if (!payload || !payload.value) return null;
@@ -121,7 +143,7 @@ export const VendorAnalyticsChart: React.FC = () => {
         {/* Tab Selector Pill with Smooth Framer Motion Background Slide */}
         <div className="relative flex items-center gap-1 p-1 bg-zinc-100 dark:bg-[#292929]/80 rounded-xl border border-zinc-200 dark:border-[#7E7E7E]/40 shrink-0">
           <button
-            onClick={() => setActiveTab('all')}
+            onClick={() => handleTabChange('all')}
             className={`relative z-10 px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition-colors duration-200 ${
               activeTab === 'all'
                 ? 'text-[#292929]'
@@ -139,7 +161,7 @@ export const VendorAnalyticsChart: React.FC = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab('high_risk')}
+            onClick={() => handleTabChange('high_risk')}
             className={`relative z-10 px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition-colors duration-200 ${
               activeTab === 'high_risk'
                 ? 'text-[#292929]'
@@ -189,7 +211,7 @@ export const VendorAnalyticsChart: React.FC = () => {
               radius={[8, 8, 0, 0]}
               name="Spend (₹ Lakhs)"
               isAnimationActive={true}
-              animationDuration={400}
+              animationDuration={250}
               animationEasing="ease-in-out"
             />
             <Bar
@@ -198,7 +220,7 @@ export const VendorAnalyticsChart: React.FC = () => {
               radius={[8, 8, 0, 0]}
               name="Risk Score (0-100)"
               isAnimationActive={true}
-              animationDuration={400}
+              animationDuration={250}
               animationEasing="ease-in-out"
             />
           </BarChart>
