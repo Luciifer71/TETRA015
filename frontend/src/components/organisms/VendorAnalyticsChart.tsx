@@ -165,17 +165,17 @@ export const VendorAnalyticsChart: React.FC = () => {
       </motion.div>
 
       {/* Footer Stat Pills */}
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800/80 z-10 text-xs text-zinc-600 dark:text-zinc-400">
+      <div className="flex flex-wrap items-center justify-start gap-6 mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800/80 z-10 text-sm font-bold text-zinc-800 dark:text-zinc-200">
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-emerald-500" />
+          <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-sm shrink-0" />
           <span>Spend Volume</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-amber-500" />
+          <span className="w-3.5 h-3.5 rounded-full bg-amber-500 shadow-sm shrink-0" />
           <span>Risk Score</span>
         </div>
-        <div className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-          <TrendingUp className="w-3.5 h-3.5" />
+        <div className="font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+          <TrendingUp className="w-4 h-4" />
           <span>Peak Audit Month: July 2026</span>
         </div>
       </div>

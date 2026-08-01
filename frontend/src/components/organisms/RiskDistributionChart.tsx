@@ -91,9 +91,10 @@ export const RiskDistributionChart: React.FC = () => {
               cy="50%"
               innerRadius={62}
               outerRadius={78}
-              paddingAngle={6}
+              paddingAngle={3}
+              minAngle={8}
               dataKey="value"
-              cornerRadius={6}
+              cornerRadius={4}
               onMouseEnter={(_, index) => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
             >
@@ -101,8 +102,8 @@ export const RiskDistributionChart: React.FC = () => {
                 <Cell
                   key={`cell-${index}`}
                   fill={entry.color}
-                  stroke={activeIndex === index ? (darkMode ? '#000000' : '#0f172a') : (darkMode ? '#1c1c22' : '#ffffff')}
-                  strokeWidth={activeIndex === index ? 3 : 2}
+                  stroke={activeIndex === index ? (darkMode ? '#ffffff' : '#0f172a') : (darkMode ? '#1c1c22' : '#ffffff')}
+                  strokeWidth={activeIndex === index ? 3 : 1.5}
                   className="transition-all duration-200 cursor-pointer"
                   style={{
                     filter: 'none',

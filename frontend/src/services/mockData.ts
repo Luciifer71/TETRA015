@@ -194,7 +194,7 @@ export const INITIAL_VENDOR_STATS: VendorStat[] = [
 
 export const INITIAL_RISK_DISTRIBUTION: RiskDistribution[] = [
   { name: 'Low Risk (0-30)', value: 840, color: '#10B981' },
-  { name: 'Medium Risk (31-70)', value: 370, color: '#F59E0B' },
-  { name: 'High Risk (71-90)', value: 32, color: '#EF4444' },
-  { name: 'Critical Risk (91-100)', value: 6, color: '#DC2626' }
+  { name: 'Medium Risk (31-70)', value: 370, color: '#EAB308' },
+  { name: 'High Risk (71-90)', value: 32, color: '#F97316' },
+  { name: 'Critical Risk (91-100)', value: 6, color: '#FF1744' }
 ];

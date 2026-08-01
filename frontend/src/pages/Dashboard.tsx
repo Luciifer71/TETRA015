@@ -49,17 +49,17 @@ export const Dashboard: React.FC = () => {
 
           {/* Reference UI Segmented Progress Bar & Tags */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#2E2E2D] text-white dark:bg-white/10 dark:text-white border border-[#2E2E2D] dark:border-white/15 shadow-sm">
-              Verified 65%
+            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shadow-sm">
+              Low Risk 67%
             </span>
-            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#F3DDB6] text-[#000000] border border-[#F3DDB6]/40 shadow-sm">
-              Review 20%
+            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-yellow-500/15 text-yellow-800 dark:text-yellow-300 border border-yellow-500/30 shadow-sm">
+              Medium 30%
             </span>
-            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
-              Risk 10%
+            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-orange-500/15 text-orange-800 dark:text-orange-300 border border-orange-500/30 shadow-sm">
+              High Risk 2.5%
             </span>
-            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#D0D0D2]/50 text-[#2E2E2D] dark:bg-white/5 dark:text-[#7E7E7E] border border-[#BCBCBE] dark:border-white/5">
-              Flagged 5%
+            <span className="px-3 py-1 rounded-xl text-xs font-bold bg-red-500/20 text-red-800 dark:text-red-300 border border-red-500/40 shadow-sm">
+              Critical 0.5%
             </span>
           </div>
         </div>

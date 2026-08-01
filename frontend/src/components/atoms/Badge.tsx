@@ -25,18 +25,18 @@ export const Badge: React.FC<BadgeProps> = ({ type, value, size = 'md', showIcon
         label: 'LOW RISK',
       },
       MEDIUM: {
-        bg: 'bg-amber-100 dark:bg-amber-500/15 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-500/30',
-        icon: <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />,
+        bg: 'bg-yellow-100 dark:bg-yellow-500/15 text-yellow-900 dark:text-yellow-300 border-yellow-300 dark:border-yellow-500/30',
+        icon: <AlertTriangle className="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400" />,
         label: 'MEDIUM RISK',
       },
       HIGH: {
-        bg: 'bg-rose-100 dark:bg-rose-500/15 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-500/30',
-        icon: <ShieldAlert className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />,
+        bg: 'bg-orange-100 dark:bg-orange-500/20 text-orange-950 dark:text-orange-300 border-orange-300 dark:border-orange-500/40',
+        icon: <ShieldAlert className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />,
         label: 'HIGH RISK',
       },
       CRITICAL: {
-        bg: 'bg-red-200 dark:bg-red-600/25 text-red-950 dark:text-red-200 border-red-400 dark:border-red-500/50 animate-pulse',
-        icon: <ShieldAlert className="w-3.5 h-3.5 text-red-600 dark:text-red-300" />,
+        bg: 'bg-red-100 dark:bg-red-500/25 text-red-900 dark:text-red-300 border-red-400 dark:border-red-500/60 animate-pulse',
+        icon: <ShieldAlert className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />,
         label: 'CRITICAL',
       },
     }[risk] || {

@@ -8,7 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"DM Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Bragton Demo"', '"DM Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['"Bragton Demo"', 'monospace'],
       },
       borderRadius: {
         'xl': '14px',
@@ -57,9 +58,9 @@ export default {
         },
         risk: {
           low: '#10B981',
-          medium: '#F3DDB6',
-          high: '#EF4444',
-          critical: '#DC2626',
+          medium: '#EAB308',
+          high: '#F97316',
+          critical: '#FF1744',
         }
       },
       boxShadow: {

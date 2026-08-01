@@ -99,10 +99,12 @@ export const QuickInvoiceDrawer: React.FC<QuickInvoiceDrawerProps> = ({ invoice,
               <div className="w-full bg-slate-200 dark:bg-white/10 h-2.5 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
-                    invoice.riskScore > 75
-                      ? 'bg-rose-500'
-                      : invoice.riskScore > 40
-                      ? 'bg-amber-400'
+                    invoice.riskScore >= 90
+                      ? 'bg-red-600'
+                      : invoice.riskScore >= 70
+                      ? 'bg-orange-500'
+                      : invoice.riskScore >= 35
+                      ? 'bg-yellow-400'
                       : 'bg-emerald-500'
                   }`}
                   style={{ width: `${invoice.riskScore}%` }}

@@ -122,7 +122,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, pageSize =
                       <div className="w-20 bg-[#D0D0D2]/40 dark:bg-white/10 h-1.5 rounded-full mt-1.5 overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
-                            inv.riskScore >= 70 ? 'bg-rose-500' : inv.riskScore >= 35 ? 'bg-amber-400' : 'bg-emerald-500'
+                            inv.riskScore >= 90 ? 'bg-red-600' : inv.riskScore >= 70 ? 'bg-orange-500' : inv.riskScore >= 35 ? 'bg-yellow-400' : 'bg-emerald-500'
                           }`}
                           style={{ width: `${inv.riskScore}%` }}
                         />
