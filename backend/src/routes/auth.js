@@ -71,23 +71,38 @@ router.post('/assign-role', async (req, res) => {
     const supabase = getSupabase();
     const { email, role } = AssignRoleSchema.parse(req.body);
 
-    const { data, error } = await supabase
+    // First, check if user exists in users_roles
+    const { data: existing } = await supabase
       .from('users_roles')
-      .upsert({
-        email,
-        role,
-        updated_at: new Date().toISOString()
-      })
+      .select('*')
       .eq('email', email)
-      .select();
+      .single();
 
-    if (error) throw error;
+    if (existing) {
+      // Update existing user
+      const { data, error } = await supabase
+        .from('users_roles')
+        .update({
+          role,
+          updated_at: new Date().toISOString()
+        })
+        .eq('email', email)
+        .select();
 
-    res.json({
-      success: true,
-      message: `Role updated to ${role}`,
-      data: data[0]
-    });
+      if (error) throw error;
+
+      return res.json({
+        success: true,
+        message: `Role updated to ${role}`,
+        data: data[0]
+      });
+    } else {
+      // User doesn't exist - can't assign role without auth_id
+      return res.status(404).json({
+        success: false,
+        error: 'User not found. Create user with signup first.'
+      });
+    }
   } catch (error) {
     if (error.issues) {
       return res.status(400).json({ 
@@ -153,57 +168,5 @@ router.get('/user-role/:email', async (req, res) => {
     });
   }
 });
-
-// TEMPORARY: Uncomment this route ONLY for initial setup
-// Comment out immediately after creating admin user
-if (process.env.ENABLE_SETUP_ADMIN === 'true') {
-  router.post('/setup-admin', async (req, res) => {
-    try {
-      const supabase = getSupabase();
-      const { email, password, full_name } = req.body;
-
-      if (!email || !password) {
-        return res.status(400).json({
-          success: false,
-          error: 'Email and password required'
-        });
-      }
-
-      // Create admin user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password
-      });
-
-      if (authError) throw authError;
-
-      // Assign admin role
-      const { data: roleData, error: roleError } = await supabase
-        .from('users_roles')
-        .insert({
-          auth_id: authData.user.id,
-          email,
-          role: 'admin',
-          full_name: full_name || 'Admin User',
-          is_active: true
-        })
-        .select();
-
-      if (roleError) throw roleError;
-
-      res.json({
-        success: true,
-        message: 'Admin user created successfully',
-        user_id: authData.user.id,
-        email
-      });
-    } catch (error) {
-      res.status(400).json({ 
-        success: false, 
-        error: error.message 
-      });
-    }
-  });
-}
 
 export default router;
