@@ -1,4 +1,4 @@
-import mimetypes
+﻿import mimetypes
 from app.services.ai_extractor import extract_invoice_data
 
 async def get_ocr_fusion(file_path: str) -> dict:

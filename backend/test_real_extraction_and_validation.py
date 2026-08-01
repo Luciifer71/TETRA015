@@ -1,4 +1,4 @@
-"""
+﻿"""
 REAL EXTRACTION & VALIDATION TEST
 Extracts actual data from invoice files (PDF/Image) and validates against Purchase Ledger
 """
@@ -21,7 +21,7 @@ from groq import Groq
 
 async def setup_ledger(db):
     """Create real purchase ledger entries"""
-    print("\n⏳ Setting up Purchase Ledger...")
+    print("\nΓÅ│ Setting up Purchase Ledger...")
     
     # Clear existing
     db.query(PurchaseLedger).delete()
@@ -62,14 +62,14 @@ async def setup_ledger(db):
         db.add(po)
     db.commit()
     
-    print(f"✅ Created {len(pos)} Purchase Orders:")
+    print(f"Γ£à Created {len(pos)} Purchase Orders:")
     for po in pos:
-        print(f"   • {po.po_number}: {po.vendor_name} - ₹{po.expected_amount:,.2f}")
+        print(f"   ΓÇó {po.po_number}: {po.vendor_name} - Γé╣{po.expected_amount:,.2f}")
 
 
 async def setup_vendor_master(db):
     """Create vendor master data"""
-    print("\n⏳ Setting up Vendor Master...")
+    print("\nΓÅ│ Setting up Vendor Master...")
     
     # Clear existing
     db.query(VendorMaster).delete()
@@ -106,14 +106,14 @@ async def setup_vendor_master(db):
         db.add(vendor)
     db.commit()
     
-    print(f"✅ Created {len(vendors)} Vendors:")
+    print(f"Γ£à Created {len(vendors)} Vendors:")
     for vendor in vendors:
-        print(f"   • {vendor.vendor_name} (GST: {vendor.gst_number})")
+        print(f"   ΓÇó {vendor.vendor_name} (GST: {vendor.gst_number})")
 
 
 async def extract_from_image(file_path: Path):
     """Extract invoice data from real image or PDF using Groq"""
-    print(f"\n⏳ Extracting invoice data from {file_path.name}...")
+    print(f"\nΓÅ│ Extracting invoice data from {file_path.name}...")
     
     try:
         # Pass the file_path directly into get_ocr_fusion
@@ -162,17 +162,17 @@ Return ONLY this JSON structure (fill missing fields with null):
             response_text = response_text.replace("```json", "").replace("```", "").strip()
         
         extracted = json.loads(response_text)
-        print(f"✅ Extracted invoice: {extracted.get('invoice_number', 'N/A')}")
+        print(f"Γ£à Extracted invoice: {extracted.get('invoice_number', 'N/A')}")
         return extracted
     
     except Exception as e:
-        print(f"❌ Extraction failed: {e}")
+        print(f"Γ¥î Extraction failed: {e}")
         return None
 
 
 async def validate_against_ledger(db, invoice_data):
     """Validate extracted invoice against purchase ledger"""
-    print(f"\n⏳ Validating against Purchase Ledger...")
+    print(f"\nΓÅ│ Validating against Purchase Ledger...")
     
     validation_result = {
         "invoice_number": invoice_data.get('invoice_number'),
@@ -190,14 +190,14 @@ async def validate_against_ledger(db, invoice_data):
     if vendor:
         validation_result["checks"].append({
             "type": "VENDOR_FOUND",
-            "status": "PASS ✅",
+            "status": "PASS Γ£à",
             "message": f"Vendor found in master: {vendor.vendor_name}",
             "gst_match": vendor.gst_number == invoice_data.get('vendor_gst')
         })
     else:
         validation_result["checks"].append({
             "type": "VENDOR_NOT_FOUND",
-            "status": "FAIL ⚠️",
+            "status": "FAIL ΓÜá∩╕Å",
             "message": f"Vendor '{vendor_name}' not in master database",
             "risk": "HIGH"
         })
@@ -208,7 +208,7 @@ async def validate_against_ledger(db, invoice_data):
     
     validation_result["checks"].append({
         "type": "GSTIN_FORMAT",
-        "status": "PASS ✅" if gst_valid else "FAIL ⚠️",
+        "status": "PASS Γ£à" if gst_valid else "FAIL ΓÜá∩╕Å",
         "message": f"GSTIN length: {len(gst or '')}/15",
         "gstin": gst
     })
@@ -225,7 +225,7 @@ async def validate_against_ledger(db, invoice_data):
         
         validation_result["checks"].append({
             "type": "AMOUNT_VERIFICATION",
-            "status": "PASS ✅" if amount_match else "WARN ⚠️",
+            "status": "PASS Γ£à" if amount_match else "WARN ΓÜá∩╕Å",
             "po_amount": po_amt,
             "invoice_amount": inv_amt,
             "difference": po_amt - inv_amt
@@ -267,7 +267,7 @@ def locate_test_file() -> Path | None:
 async def main():
     print("\n" + "="*90)
     print("REAL EXTRACTION & VALIDATION TEST")
-    print("Extracts from invoice file → Validates against Purchase Ledger")
+    print("Extracts from invoice file ΓåÆ Validates against Purchase Ledger")
     print("="*90)
     
     db = SessionLocal()
@@ -281,7 +281,7 @@ async def main():
         # Locate sample file dynamically
         test_file_path = locate_test_file()
         if not test_file_path:
-            print("❌ No test invoice file found! Please place 'demo-invoice-20tax-2.pdf' or 'image.png' in the root or backend folder.")
+            print("Γ¥î No test invoice file found! Please place 'demo-invoice-20tax-2.pdf' or 'image.png' in the root or backend folder.")
             return
 
         extracted_invoice = await extract_from_image(test_file_path)
@@ -296,12 +296,12 @@ async def main():
         print("VALIDATION RESULTS")
         print("="*90)
         
-        print(f"\n📄 Invoice: {validation['invoice_number']}")
-        print(f"🏢 Vendor: {validation['vendor_name']}")
+        print(f"\n≡ƒôä Invoice: {validation['invoice_number']}")
+        print(f"≡ƒÅó Vendor: {validation['vendor_name']}")
         tot_amt = validation['total_amount'] or 0.0
-        print(f"💰 Amount: ₹{float(tot_amt):,.2f}")
+        print(f"≡ƒÆ░ Amount: Γé╣{float(tot_amt):,.2f}")
         
-        print(f"\n📋 Checks:")
+        print(f"\n≡ƒôï Checks:")
         for check in validation['checks']:
             print(f"   {check['status']}")
             if 'message' in check:
@@ -311,7 +311,7 @@ async def main():
                     if key not in ['status']:
                         print(f"      {key}: {val}")
         
-        print(f"\n🎯 Risk Score: {validation['risk_score']}/100 ({validation['status']})")
+        print(f"\n≡ƒÄ» Risk Score: {validation['risk_score']}/100 ({validation['status']})")
         
         # Save results
         output_file = Path(__file__).parent / "docs" / "REAL_EXTRACTION_VALIDATION_RESULTS.json"
@@ -320,7 +320,7 @@ async def main():
         with open(output_file, "w") as f:
             json.dump(validation, f, indent=2, default=str)
         
-        print(f"\n✅ Results saved: {output_file}")
+        print(f"\nΓ£à Results saved: {output_file}")
         
     finally:
         db.close()
