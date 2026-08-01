@@ -40,10 +40,10 @@ export async function customLogin(email: string, password: string) {
       data: { user: data.user },
       error: null
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       data: null,
-      error: { message: error.message }
+      error: { message: error?.message || 'An error occurred' }
     };
   }
 }

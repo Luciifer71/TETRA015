@@ -9,17 +9,64 @@ export const VendorAnalyticsChart: React.FC = () => {
   const { vendorStats, darkMode } = useInvoiceStore();
   const [activeTab, setActiveTab] = useState<'all' | 'high_risk'>('all');
 
+  const safeVendorStats = vendorStats || [];
   const filteredStats = activeTab === 'high_risk'
-    ? vendorStats.filter((v) => v.riskScore >= 40)
-    : vendorStats;
+    ? safeVendorStats.filter((v) => v.riskScore >= 40)
+    : safeVendorStats;
 
   const formattedData = filteredStats.map((v) => ({
     fullName: v.vendorName,
-    name: v.vendorName.length > 15 ? v.vendorName.substring(0, 12) + '...' : v.vendorName,
+    name: v.vendorName,
     SpendInLakhs: Number((v.totalSpend / 100000).toFixed(1)),
     RiskScore: v.riskScore,
     status: v.status,
   }));
+
+  const CustomXAxisTick = ({ x, y, payload }: any) => {
+    if (!payload || !payload.value) return null;
+    const fullName: string = payload.value;
+
+    // Split words on spaces/ampersands or camelCase boundaries
+    const words = fullName
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .split(/[\s&]+/)
+      .filter(Boolean);
+
+    const lines: string[] = [];
+    let currentLine = '';
+
+    words.forEach((word: string) => {
+      if ((currentLine + ' ' + word).trim().length <= 13) {
+        currentLine = (currentLine + ' ' + word).trim();
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = word;
+      }
+    });
+    if (currentLine) lines.push(currentLine);
+
+    const displayLines = lines.slice(0, 3);
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          textAnchor="middle"
+          fill={darkMode ? '#F3DDB6' : '#1e293b'}
+          fontSize={13}
+          fontWeight={800}
+          className="font-extrabold"
+        >
+          {displayLines.map((line: string, index: number) => (
+            <tspan key={index} x={0} dy={index === 0 ? 18 : 16}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
+    );
+  };
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -54,7 +101,7 @@ export const VendorAnalyticsChart: React.FC = () => {
   };
 
   return (
-    <Card variant="glass" className="relative flex flex-col h-full overflow-hidden border border-zinc-200 dark:border-[#8D9797]/30 bg-white/90 dark:bg-[#1c1c22] shadow-lg dark:shadow-2xl transition-colors duration-300">
+    <Card variant="glass" className="relative flex flex-col h-full overflow-hidden border border-zinc-200 dark:border-[#8D9797]/30 bg-white/90 dark:bg-[#1c1c22] shadow-lg dark:shadow-2xl transition-colors duration-300 p-6">
       {/* Background Ambient Mesh Glow */}
       <div className="absolute -top-12 -left-12 w-48 h-48 bg-[#8D9797]/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -112,15 +159,9 @@ export const VendorAnalyticsChart: React.FC = () => {
       </div>
 
       {/* Animated Chart Area with Key-Based Cross-Fade */}
-      <motion.div
-        key={activeTab}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="w-full h-64 z-10"
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={formattedData} margin={{ top: 15, right: 10, left: -20, bottom: 25 }}>
+      <div className="w-full h-72 z-10 my-1">
+        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+          <BarChart data={formattedData} margin={{ top: 15, right: 15, left: -10, bottom: 20 }}>
             <defs>
               <linearGradient id="spendGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
@@ -136,9 +177,9 @@ export const VendorAnalyticsChart: React.FC = () => {
             <XAxis
               dataKey="name"
               stroke={darkMode ? '#7E7E7E' : '#94a3b8'}
-              tick={{ fill: darkMode ? '#F3DDB6' : '#475569', fontSize: 11 }}
-              angle={-20}
-              textAnchor="end"
+              interval={0}
+              height={60}
+              tick={<CustomXAxisTick />}
             />
             <YAxis stroke={darkMode ? '#7E7E7E' : '#94a3b8'} tick={{ fill: darkMode ? '#F3DDB6' : '#475569', fontSize: 11 }} />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: darkMode ? 'rgba(243, 221, 182, 0.08)' : 'rgba(16, 185, 129, 0.08)' }} />
@@ -162,10 +203,10 @@ export const VendorAnalyticsChart: React.FC = () => {
             />
           </BarChart>
         </ResponsiveContainer>
-      </motion.div>
+      </div>
 
       {/* Footer Stat Pills */}
-      <div className="flex flex-wrap items-center justify-start gap-6 mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800/80 z-10 text-sm font-bold text-zinc-800 dark:text-zinc-200">
+      <div className="flex flex-wrap items-center justify-start gap-6 mt-1 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 z-10 text-sm font-bold text-zinc-800 dark:text-zinc-200">
         <div className="flex items-center gap-2">
           <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-sm shrink-0" />
           <span>Spend Volume</span>

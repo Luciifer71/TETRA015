@@ -44,11 +44,11 @@ export const InvoiceVolumeTrendChart: React.FC = () => {
   };
 
   return (
-    <Card variant="glass" className="relative flex flex-col h-full overflow-hidden border border-zinc-200 dark:border-[#8D9797]/30 bg-white/90 dark:bg-[#1c1c22] shadow-lg dark:shadow-2xl transition-colors duration-300">
+    <Card variant="glass" className="relative flex flex-col justify-between h-full overflow-hidden border border-zinc-200 dark:border-[#8D9797]/30 bg-white/90 dark:bg-[#1c1c22] shadow-lg dark:shadow-2xl transition-colors duration-300 p-6">
       {/* Background Ambient Mesh Glow */}
       <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#8D9797]/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 z-10">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-2 z-10">
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-extrabold text-zinc-900 dark:text-[#F3DDB6] tracking-tight">
@@ -68,9 +68,9 @@ export const InvoiceVolumeTrendChart: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full h-64 z-10">
+      <div className="w-full flex-1 min-h-[250px] my-3 z-10">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={trendData} margin={{ top: 15, right: 10, left: -20, bottom: 5 }}>
+          <AreaChart data={trendData} margin={{ top: 24, right: 16, left: -5, bottom: 8 }}>
             <defs>
               <linearGradient id="auditedArea" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
@@ -81,14 +81,49 @@ export const InvoiceVolumeTrendChart: React.FC = () => {
                 <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#7E7E7E/30' : '#e4e4e7'} />
-            <XAxis dataKey="month" stroke={darkMode ? '#7E7E7E' : '#94a3b8'} tick={{ fill: darkMode ? '#F3DDB6' : '#475569', fontSize: 11 }} />
-            <YAxis stroke={darkMode ? '#7E7E7E' : '#94a3b8'} tick={{ fill: darkMode ? '#F3DDB6' : '#475569', fontSize: 11 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? 'rgba(255,255,255,0.08)' : '#e4e4e7'} />
+            <XAxis dataKey="month" stroke={darkMode ? '#7E7E7E' : '#94a3b8'} tick={{ fill: darkMode ? '#F3DDB6' : '#475569', fontSize: 11 }} tickMargin={8} />
+            <YAxis stroke={darkMode ? '#7E7E7E' : '#94a3b8'} tick={{ fill: darkMode ? '#F3DDB6' : '#475569', fontSize: 11 }} tickMargin={6} />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="TotalAudited" stroke="#10b981" strokeWidth={3} fill="url(#auditedArea)" name="Total Audited" />
             <Area type="monotone" dataKey="FlaggedCount" stroke="#f43f5e" strokeWidth={2.5} fill="url(#flaggedArea)" name="Flagged Exceptions" />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Bottom Summary & Legend Metrics Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-2 pt-3 border-t border-zinc-200 dark:border-white/10 z-10 text-xs">
+        <div className="flex flex-col p-2 rounded-xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/5">
+          <div className="flex items-center gap-1.5 text-zinc-500 dark:text-[#7E7E7E] text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="truncate">Total Audited</span>
+          </div>
+          <span className="font-extrabold text-sm text-zinc-900 dark:text-white mt-0.5">1,248</span>
+        </div>
+
+        <div className="flex flex-col p-2 rounded-xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/5">
+          <div className="flex items-center gap-1.5 text-zinc-500 dark:text-[#7E7E7E] text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+            <span className="truncate">Flagged Risks</span>
+          </div>
+          <span className="font-extrabold text-sm text-zinc-900 dark:text-white mt-0.5">38</span>
+        </div>
+
+        <div className="flex flex-col p-2 rounded-xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/5">
+          <div className="flex items-center gap-1.5 text-zinc-500 dark:text-[#7E7E7E] text-[11px]">
+            <Activity className="w-3 h-3 text-indigo-500 shrink-0" />
+            <span className="truncate">Time Saved</span>
+          </div>
+          <span className="font-extrabold text-sm text-zinc-900 dark:text-white mt-0.5">320 hrs</span>
+        </div>
+
+        <div className="flex flex-col p-2 rounded-xl bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/5">
+          <div className="flex items-center gap-1.5 text-zinc-500 dark:text-[#7E7E7E] text-[11px]">
+            <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+            <span className="truncate">AI Accuracy</span>
+          </div>
+          <span className="font-extrabold text-sm text-zinc-900 dark:text-white mt-0.5">99.4%</span>
+        </div>
       </div>
     </Card>
   );
