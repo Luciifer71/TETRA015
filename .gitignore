@@ -138,4 +138,9 @@ sample_data/
 backend/data/sample_invoices/
 
 # Mimocode
+.mimocode/
 .mimocode/.cron-lock
+
+# Documentation (local only)
+docs/
+*.local.md
