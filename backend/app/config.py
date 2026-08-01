@@ -35,3 +35,10 @@ def get_settings() -> Settings:
 settings = get_settings()
 UPLOAD_DIR = Path(settings.upload_dir)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Mime type to extension mapping
+ALLOWED_TYPES = {
+    "application/pdf": ".pdf",
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+}
