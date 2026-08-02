@@ -43,7 +43,7 @@ async def save_invoice_to_supabase(
             "extracted_data": invoice_data,
             "confidence_scores": confidence_scores,
             "status": "PROCESSED",
-            "is_duplicate": validation_result.get("duplicate_check", {}).get("is_duplicate", False),
+            "is_duplicate": (validation_result.get("duplicate_check") or {}).get("is_duplicate", False),
             "uploaded_by": user_email,
             "processed_at": datetime.utcnow().isoformat(),
             "source_upload_id": upload_id,

@@ -236,9 +236,9 @@ class ApiClient {
         }
 
         if (status === "FAILED") {
-          throw new Error(
-            response.data.error_message || "Upload processing failed"
-          );
+          const err = new Error(response.data.error_message || "Upload processing failed");
+          (err as any).isFatal = true;
+          throw err;
         }
 
         // Still processing, wait and retry with exponential backoff
@@ -246,6 +246,10 @@ class ApiClient {
         await new Promise((resolve) => setTimeout(resolve, backoffTime));
         attempt++;
       } catch (error) {
+        if (error instanceof Error && (error as any).isFatal) {
+          throw error;
+        }
+
         this.logError(`Poll attempt ${attempt} failed`, error);
         
         // Don't retry on client errors (400-499) except 408 (timeout)

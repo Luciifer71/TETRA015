@@ -1,4 +1,4 @@
-﻿import uuid
+import uuid
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
@@ -8,6 +8,10 @@ from app.models import Upload
 from app.services import process_upload, process_invoice_pipeline
 from app.schemas import UploadResponse, UploadDetailResponse, BaseResponse
 from app.utils import generate_id, now_utc
+from datetime import datetime, timezone
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -77,7 +81,7 @@ async def _process_background(upload_id: str, file_path: str, mime_type: str):
         if upload:
             result = await process_invoice_pipeline(db, upload, file_path, mime_type)
             upload.upload_status = "COMPLETED"
-            upload.processed_at = now_utc()
+            upload.processed_at = datetime.now(timezone.utc)
             db.commit()
             
             # Save to Supabase
@@ -96,9 +100,9 @@ async def _process_background(upload_id: str, file_path: str, mime_type: str):
                 if invoice_id:
                     upload.invoice_id = invoice_id
                     db.commit()
-                    print(f"✅ Invoice saved to Supabase: {invoice_id}")
+                    logger.info(f"Invoice saved to Supabase: {invoice_id}")
             except Exception as e:
-                print(f"⚠️  Failed to save to Supabase: {str(e)}")
+                logger.warning(f"Failed to save to Supabase: {str(e)}")
     except Exception as e:
         if upload:
             upload.upload_status = "FAILED"

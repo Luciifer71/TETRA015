@@ -16,6 +16,12 @@ class AuditReport:
     overall_status: str
     summary: str
 
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def to_json(self) -> str:
+        return json.dumps(asdict(self))
+
 
 class AuditReportGenerator:
     def generate(

@@ -13,6 +13,7 @@ from app.services.duplicate_detector import InvoiceFingerprintEngine
 from app.models import Upload
 from app.utils import now_utc
 from app.config import settings
+from datetime import datetime, timezone
 
 
 UPLOAD_DIR = Path(settings.UPLOAD_DIR) if hasattr(settings, 'UPLOAD_DIR') else Path("uploads")
@@ -83,7 +84,7 @@ async def process_invoice_pipeline(
         upload.risk_score = risk_result.risk_score
         upload.risk_level = risk_result.risk_level
         upload.validation_errors = validation_result.errors if validation_result.errors else None
-        upload.processed_at = now_utc()
+        upload.processed_at = datetime.now(timezone.utc)
         upload.audit_report = audit_report.to_json()
 
         db.commit()
