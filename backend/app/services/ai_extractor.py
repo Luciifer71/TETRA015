@@ -1,10 +1,12 @@
-﻿import base64
-import json
-import time
-import google.generativeai as genai
-from typing import Dict, Any, Optional, List
+import base64
 from dataclasses import dataclass
 import io
+import json
+import time
+from typing import Any, Dict, List, Optional
+
+import httpx
+import google.generativeai as genai
 
 from app.config import settings
 from app.utils.file_handler import convert_to_images
@@ -114,21 +116,124 @@ class RateLimiter:
 _rate_limiter = RateLimiter()
 
 
+def _clean_json_text(raw_text: str) -> str:
+    cleaned_text = (raw_text or "{}").strip()
+    if cleaned_text.startswith("```"):
+        lines = cleaned_text.splitlines()
+        if lines and lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].startswith("```"):
+            lines = lines[:-1]
+        cleaned_text = "\n".join(lines).strip()
+    return cleaned_text
+
+
+def _parse_json(raw_text: str) -> Dict[str, Any]:
+    try:
+        return json.loads(_clean_json_text(raw_text))
+    except json.JSONDecodeError:
+        return {}
+
+
 def _configure_gemini():
     if not settings.gemini_api_key:
         raise ValueError("GEMINI_API_KEY not configured")
     genai.configure(api_key=settings.gemini_api_key)
 
 
+async def _call_gemini(prompt: str, image_part: Dict[str, str]) -> str:
+    _configure_gemini()
+    candidate_models = [
+        settings.GEMINI_MODEL,
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-flash-latest",
+        "gemini-2.5-pro",
+    ]
+
+    response = None
+    last_error = None
+    for model_name in candidate_models:
+        if not model_name:
+            continue
+        try:
+            model = genai.GenerativeModel(model_name)
+            response = await model.generate_content_async([prompt, image_part])
+            if response and response.text:
+                return response.text
+        except Exception as exc:
+            last_error = exc
+
+    raise RuntimeError(f"All Gemini model attempts failed. Last error: {last_error}")
+
+
+async def _call_groq(prompt: str) -> str:
+    if not settings.groq_api_key:
+        raise ValueError("GROQ_API_KEY not configured")
+
+    payload = {
+        "model": settings.GROQ_MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
+    }
+    headers = {
+        "Authorization": f"Bearer {settings.groq_api_key}",
+        "Content-Type": "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers=headers,
+            json=payload,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"]
+
+
+async def _call_openrouter(prompt: str) -> str:
+    if not settings.openrouter_api_key:
+        raise ValueError("OPENROUTER_API_KEY not configured")
+
+    payload = {
+        "model": settings.OPENROUTER_MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
+    }
+    headers = {
+        "Authorization": f"Bearer {settings.openrouter_api_key}",
+        "Content-Type": "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=payload,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"]
+
+
+async def _generate_extraction(prompt: str, image_part: Dict[str, str]) -> str:
+    provider = settings.active_llm_provider
+    if provider == "groq":
+        return await _call_groq(prompt)
+    if provider == "openrouter":
+        return await _call_openrouter(prompt)
+    return await _call_gemini(prompt, image_part)
+
+
 def _run_paddleocr(image_path: str) -> Optional[OCRResult]:
-    """Run PaddleOCR on image to extract text, bounding boxes, tables, and confidence."""
     try:
         from paddleocr import PaddleOCR
     except ImportError:
         return None
 
     try:
-        ocr = PaddleOCR(use_angle_cls=True, lang='en', use_gpu=False, show_log=False)
+        ocr = PaddleOCR(use_angle_cls=True, lang="en", use_gpu=False, show_log=False)
         result = ocr.ocr(image_path, cls=True)
 
         text_lines = []
@@ -148,7 +253,7 @@ def _run_paddleocr(image_path: str) -> Optional[OCRResult]:
                 bounding_boxes.append({
                     "text": text,
                     "bbox": bbox,
-                    "confidence": confidence
+                    "confidence": confidence,
                 })
                 all_confidences.append(confidence)
 
@@ -159,7 +264,7 @@ def _run_paddleocr(image_path: str) -> Optional[OCRResult]:
             bounding_boxes=bounding_boxes,
             tables=tables,
             confidence_scores=all_confidences,
-            avg_confidence=avg_conf * 100
+            avg_confidence=avg_conf * 100,
         )
     except Exception:
         return None
@@ -167,8 +272,6 @@ def _run_paddleocr(image_path: str) -> Optional[OCRResult]:
 
 async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResult:
     start_time = time.time()
-
-    _configure_gemini()
     _rate_limiter.acquire()
 
     images = convert_to_images(file_path, mime_type)
@@ -178,7 +281,9 @@ async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResu
     primary_image.save(img_byte_arr, format="PNG")
     primary_image_bytes = img_byte_arr.getvalue()
 
+    import os
     import tempfile
+
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
         tmp.write(primary_image_bytes)
         tmp_path = tmp.name
@@ -186,12 +291,11 @@ async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResu
     try:
         ocr_result = _run_paddleocr(tmp_path)
     finally:
-        import os
         os.unlink(tmp_path)
 
     image_part = {
         "mime_type": "image/png",
-        "data": base64.b64encode(primary_image_bytes).decode("utf-8")
+        "data": base64.b64encode(primary_image_bytes).decode("utf-8"),
     }
 
     if ocr_result and ocr_result.text.strip():
@@ -201,57 +305,23 @@ async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResu
             ocr_text=ocr_result.text,
             tables=tables_str,
             bounding_boxes=bbox_str,
-            avg_confidence=ocr_result.avg_confidence
+            avg_confidence=ocr_result.avg_confidence,
         )
         ocr_confidence = ocr_result.avg_confidence
     else:
         prompt = EXTRACTION_PROMPT_VISION_ONLY
         ocr_result = OCRResult(
-            text="", bounding_boxes=[], tables=[],
-            confidence_scores=[], avg_confidence=0.0
+            text="",
+            bounding_boxes=[],
+            tables=[],
+            confidence_scores=[],
+            avg_confidence=0.0,
         )
-        ocr_confidence = 85.0  # Default when using vision only
+        ocr_confidence = 85.0
 
-    candidate_models = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-flash-latest",
-        "gemini-2.5-pro",
-    ]
-
-    response = None
-    last_error = None
-    for model_name in candidate_models:
-        try:
-            model = genai.GenerativeModel(model_name)
-            response = await model.generate_content_async([prompt, image_part])
-            if response:
-                break
-        except Exception as e:
-            last_error = e
-            continue
-
-    if response is None:
-        raise RuntimeError(f"All Gemini model attempts failed. Last error: {last_error}")
-
-    raw_text = response.text if response.text else "{}"
-
-    cleaned_text = raw_text.strip()
-    if cleaned_text.startswith("```"):
-        lines = cleaned_text.splitlines()
-        if lines[0].startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].startswith("```"):
-            lines = lines[:-1]
-        cleaned_text = "\n".join(lines).strip()
-
-    try:
-        extracted = json.loads(cleaned_text)
-    except json.JSONDecodeError:
-        extracted = {}
-
+    raw_text = await _generate_extraction(prompt, image_part)
+    extracted = _parse_json(raw_text)
     confidence_scores = _calculate_confidence(extracted, raw_text, ocr_confidence)
-
     processing_time = int((time.time() - start_time) * 1000)
 
     return ExtractionResult(
@@ -259,17 +329,21 @@ async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResu
         confidence_scores=confidence_scores,
         raw_response=raw_text,
         processing_time_ms=processing_time,
-        ocr_result=ocr_result
+        ocr_result=ocr_result,
     )
 
 
 def _calculate_confidence(extracted: Dict[str, Any], raw_text: str, ocr_confidence: float) -> Dict[str, float]:
     required_fields = [
-        "invoice_number", "vendor_name", "vendor_gst",
-        "invoice_date", "total_amount", "currency"
+        "invoice_number",
+        "vendor_name",
+        "vendor_gst",
+        "invoice_date",
+        "total_amount",
+        "currency",
     ]
 
-    scores = {}
+    scores: Dict[str, float] = {}
     for field in required_fields:
         value = extracted.get(field)
         if value is not None and value != "":

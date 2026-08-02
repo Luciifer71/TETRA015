@@ -19,6 +19,11 @@ export const Badge: React.FC<BadgeProps> = ({ type, value, size = 'md', showIcon
   if (type === 'risk') {
     const risk = value as RiskLevel;
     const config = {
+      MINIMAL: {
+        bg: 'bg-sky-100 dark:bg-sky-500/15 text-sky-900 dark:text-sky-300 border-sky-300 dark:border-sky-500/30',
+        icon: <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />,
+        label: 'MINIMAL',
+      },
       LOW: {
         bg: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30',
         icon: <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />,
@@ -60,6 +65,10 @@ export const Badge: React.FC<BadgeProps> = ({ type, value, size = 'md', showIcon
       bg: 'bg-slate-200 dark:bg-slate-700/40 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-600',
       icon: <Clock className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />,
     },
+    PROCESSING: {
+      bg: 'bg-indigo-100 dark:bg-indigo-500/15 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-500/30',
+      icon: <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />,
+    },
     PROCESSED: {
       bg: 'bg-blue-100 dark:bg-blue-500/15 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-500/30',
       icon: <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />,
@@ -74,6 +83,10 @@ export const Badge: React.FC<BadgeProps> = ({ type, value, size = 'md', showIcon
     },
     REJECTED: {
       bg: 'bg-rose-100 dark:bg-rose-500/15 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-500/30',
+      icon: <XCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />,
+    },
+    FAILED: {
+      bg: 'bg-rose-100 dark:bg-rose-500/20 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-500/40',
       icon: <XCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />,
     },
   }[status] || {
