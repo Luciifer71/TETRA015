@@ -172,3 +172,10 @@ backend/drop-fk.js
 backend/relax-constraint.js
 backend/setup-database.js
 
+# Test & verification scripts (local testing only)
+test_pipeline.js
+test_auth_system.js
+backend/test_all_invoices.py
+backend/test_*.py
+**/test_*.js
+

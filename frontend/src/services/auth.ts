@@ -41,6 +41,7 @@ export async function customLogin(email: string, password: string) {
       error: null
     };
   } catch (error: any) {
+    console.error('Login error:', error);
     return {
       data: null,
       error: { message: error?.message || 'An error occurred' }

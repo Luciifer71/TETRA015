@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "TETRA015"
+    UPLOAD_DIR: str = "uploads"
     
     # Define both uppercase and lowercase aliases to avoid attribute errors
     GEMINI_API_KEY: str = ""

@@ -1,6 +1,6 @@
 import express from 'express';
 import { z } from 'zod';
-import { getSupabase } from '../config/supabase.js';
+import { supabase } from '../config/supabaseClient.js';
 import crypto from 'crypto';
 
 const router = express.Router();
@@ -13,7 +13,6 @@ function hashPassword(password) {
 // Custom login endpoint (bypass Supabase Auth)
 router.post('/login', async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -73,6 +72,7 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -96,7 +96,6 @@ const AssignRoleSchema = z.object({
 // Sign up
 router.post('/signup', async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { email, password, full_name, role } = SignUpSchema.parse(req.body);
 
     // Create user in Supabase Auth
@@ -151,7 +150,6 @@ router.post('/setup-admin', async (req, res) => {
       });
     }
 
-    const supabase = getSupabase();
     const { email, password, full_name } = req.body;
 
     if (!email || !password) {
@@ -202,7 +200,6 @@ router.post('/setup-admin', async (req, res) => {
 // Assign role
 router.post('/assign-role', async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { email, role } = AssignRoleSchema.parse(req.body);
 
     // First, check if user exists in users_roles
@@ -255,7 +252,6 @@ router.post('/assign-role', async (req, res) => {
 // List all users (admin only)
 router.get('/users', async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('users_roles')
       .select('*')
@@ -278,7 +274,6 @@ router.get('/users', async (req, res) => {
 // Get user role
 router.get('/user-role/:email', async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { email } = req.params;
 
     const { data, error } = await supabase

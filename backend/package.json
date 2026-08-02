@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "setup-admin": "node setup_admin.js"
+    "setup-admin": "node setup_admin.js",
+    "setup-schema": "node setup-supabase-schema-direct.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { MetricCard } from '../components/molecules/MetricCard';
 import { RiskDistributionChart } from '../components/organisms/RiskDistributionChart';
@@ -9,13 +9,109 @@ import { QuickInvoiceDrawer } from '../components/organisms/QuickInvoiceDrawer';
 import { FilterBar } from '../components/molecules/FilterBar';
 import { useInvoiceStore } from '../store/useInvoiceStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { FileCheck, ShieldAlert, Clock, Sparkles } from 'lucide-react';
+import { FileCheck, ShieldAlert, Clock, Sparkles, AlertCircle } from 'lucide-react';
 import { Invoice } from '../types/invoice';
+import { getDashboardSummary, getRecentInvoices, getRiskDistribution, getVendorStats } from '../services/dashboardService';
+import { getInvoices } from '../services/invoiceService';
 
 export const Dashboard: React.FC = () => {
   const { invoices, summary, searchQuery, selectedRiskFilter, selectedStatusFilter } = useInvoiceStore();
   const { user } = useAuthStore();
   const [selectedDrawerInvoice, setSelectedDrawerInvoice] = useState<Invoice | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch dashboard summary
+        const summaryRes = await getDashboardSummary();
+        if (summaryRes.success && summaryRes.data) {
+          const summary = summaryRes.data;
+          useInvoiceStore.setState({
+            summary: {
+              totalAudited: summary.processed || 0,
+              totalAmountProcessed: summary.total_amount || 0,
+              highRiskCount: (summary.risk_distribution?.HIGH || 0) + (summary.risk_distribution?.CRITICAL || 0),
+              pendingReviewCount: summary.pending || 0,
+              timeSavedHours: Math.floor((summary.processed || 0) * 0.5)
+            }
+          });
+        }
+
+        // Fetch recent invoices
+        const recentRes = await getRecentInvoices();
+        if (recentRes.success && Array.isArray(recentRes.data)) {
+          const mapped: Invoice[] = recentRes.data.map(inv => ({
+            id: inv.id,
+            invoiceNumber: inv.invoice_number,
+            vendorName: inv.vendor_name,
+            vendorGstin: '',
+            invoiceDate: new Date(inv.uploaded_at).toLocaleDateString(),
+            dueDate: '',
+            poNumber: '',
+            subtotal: 0,
+            taxAmount: 0,
+            totalAmount: inv.total_amount,
+            currency: 'INR',
+            status: inv.status as any,
+            riskLevel: 'LOW',
+            riskScore: 0,
+            riskFactors: [],
+            complianceStatus: 'COMPLIANT',
+            uploadedAt: new Date(inv.uploaded_at).toISOString(),
+            processedAt: new Date().toISOString(),
+            lineItems: [],
+            auditLogs: [],
+            exceptions: []
+          }));
+          useInvoiceStore.setState({ invoices: mapped });
+        }
+
+        // Fetch all invoices for table
+        const invoicesRes = await getInvoices(0, 100);
+        if (invoicesRes.success && Array.isArray(invoicesRes.data)) {
+          const mapped: Invoice[] = invoicesRes.data.map(inv => ({
+            id: inv.id,
+            invoiceNumber: inv.invoice_number,
+            vendorName: inv.vendor_name,
+            vendorGstin: inv.vendor_gst || '',
+            invoiceDate: new Date(inv.invoice_date).toLocaleDateString(),
+            dueDate: inv.due_date ? new Date(inv.due_date).toLocaleDateString() : '',
+            poNumber: '',
+            subtotal: inv.subtotal || 0,
+            taxAmount: inv.tax_amount || 0,
+            totalAmount: inv.total_amount,
+            currency: inv.currency,
+            status: inv.status as any,
+            riskLevel: 'LOW',
+            riskScore: 0,
+            riskFactors: [],
+            complianceStatus: 'COMPLIANT',
+            uploadedAt: new Date(inv.uploaded_at).toISOString(),
+            processedAt: inv.processed_at ? new Date(inv.processed_at).toISOString() : new Date().toISOString(),
+            lineItems: [],
+            auditLogs: [],
+            exceptions: []
+          }));
+          useInvoiceStore.setState({ invoices: mapped });
+        }
+      } catch (err) {
+        console.error('Failed to fetch dashboard data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
+        // Keep using mock data on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   const filteredInvoices = invoices.filter((inv) => {
     const matchesSearch =
@@ -32,6 +128,21 @@ export const Dashboard: React.FC = () => {
   const formatCurrency = (amt: number) => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amt);
   };
+
+  if (error) {
+    return (
+      <AppLayout title="Dashboard Overview">
+        <div className="p-6 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-semibold text-amber-900 dark:text-amber-200">Failed to load dashboard</h3>
+            <p className="text-sm text-amber-800 dark:text-amber-300 mt-1">{error}</p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 mt-2">Showing mock data. Make sure the backend is running on port 8000.</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout title="Dashboard Overview">
