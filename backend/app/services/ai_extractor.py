@@ -4,9 +4,10 @@ import time
 import google.generativeai as genai
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
+import io
 
 from app.config import settings
-from app.utils import convert_to_images
+from app.utils.file_handler import convert_to_images
 
 
 @dataclass
@@ -82,12 +83,16 @@ async def extract_invoice_data(file_path: str, mime_type: str) -> ExtractionResu
     # Try initializing and calling with candidates
     response = None
     last_error = None
-    
-    image_part = {
-        "mime_type": "image/png",
-        "data": base64.b64encode(primary_image).decode("utf-8"),
-    }
+# Convert PIL Image to raw bytes
+    img_byte_arr = io.BytesIO()
+    primary_image.save(img_byte_arr, format="PNG")
+    primary_image_bytes = img_byte_arr.getvalue()
 
+        # Format image_part as a dictionary payload for Gemini/GenerativeAI
+    image_part = {
+            "mime_type": "image/png",
+            "data": base64.b64encode(primary_image_bytes).decode("utf-8")
+        }
     for model_name in candidate_models:
         try:
             model = genai.GenerativeModel(model_name)

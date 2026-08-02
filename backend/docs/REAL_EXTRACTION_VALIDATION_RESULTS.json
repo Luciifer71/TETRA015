@@ -1,0 +1,26 @@
+{
+  "invoice_number": "JUG-2607-0003",
+  "vendor_name": "Khodal Water Supplier",
+  "total_amount": 50.0,
+  "checks": [
+    {
+      "type": "VENDOR_NOT_FOUND",
+      "status": "FAIL \u26a0\ufe0f",
+      "message": "Vendor 'Khodal Water Supplier' not in master database",
+      "risk": "HIGH"
+    },
+    {
+      "type": "GSTIN_FORMAT",
+      "status": "FAIL \u26a0\ufe0f",
+      "message": "GSTIN length: 0/15",
+      "gstin": null
+    },
+    {
+      "type": "INVOICE_NUMBER",
+      "status": "OK",
+      "invoice_number": "JUG-2607-0003"
+    }
+  ],
+  "risk_score": 80,
+  "status": "CRITICAL"
+}
