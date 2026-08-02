@@ -1,0 +1,219 @@
+{
+  "timestamp": "2026-08-02T08:42:53.744433",
+  "total": 10,
+  "successful": 10,
+  "failed": 0,
+  "duration_seconds": 182.410099,
+  "results": [
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-1.pdf",
+      "extraction": {
+        "invoice_number": "952384",
+        "vendor_name": "Polychemtex Inc.",
+        "amount": 1287.4,
+        "confidence": 0.6875,
+        "processing_time_ms": 20406
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-10.pdf",
+      "extraction": {
+        "invoice_number": "38948",
+        "vendor_name": "Cloud VPS",
+        "amount": 50.82,
+        "confidence": 0.61,
+        "processing_time_ms": 10545
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-2.pdf",
+      "extraction": {
+        "invoice_number": "106017",
+        "vendor_name": "Contoso Asia",
+        "amount": 577271.99,
+        "confidence": 0.61,
+        "processing_time_ms": 14336
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-3.pdf",
+      "extraction": {
+        "invoice_number": "717256",
+        "vendor_name": "Profile Construction",
+        "amount": 4459.88,
+        "confidence": 0.6875,
+        "processing_time_ms": 20992
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-4.pdf",
+      "extraction": {
+        "invoice_number": "121159",
+        "vendor_name": "Anconia Corp",
+        "amount": 179.4,
+        "confidence": 0.61,
+        "processing_time_ms": 42833
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-5.pdf",
+      "extraction": {
+        "invoice_number": "38947",
+        "vendor_name": "Cloud VPS",
+        "amount": 50.82,
+        "confidence": 0.61,
+        "processing_time_ms": 13660
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-6.pdf",
+      "extraction": {
+        "invoice_number": "952385",
+        "vendor_name": "Polychemtex Inc.",
+        "amount": 1323.38,
+        "confidence": 0.61,
+        "processing_time_ms": 17236
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-7.pdf",
+      "extraction": {
+        "invoice_number": "106018",
+        "vendor_name": "Contoso Asia",
+        "amount": 578999.7,
+        "confidence": 0.61,
+        "processing_time_ms": 14542
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-8.pdf",
+      "extraction": {
+        "invoice_number": "717257",
+        "vendor_name": "Profile Construction",
+        "amount": 4639.82,
+        "confidence": 0.6875,
+        "processing_time_ms": 12082
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    },
+    {
+      "status": "SUCCESS",
+      "file": "demo-invoice-20tax-9.pdf",
+      "extraction": {
+        "invoice_number": "121160",
+        "vendor_name": "Anconia Corp",
+        "amount": 179.4,
+        "confidence": 0.61,
+        "processing_time_ms": 15770
+      },
+      "validation": {
+        "is_valid": true,
+        "errors": 0,
+        "warnings": 1
+      },
+      "risk": {
+        "score": 3.0,
+        "level": "MINIMAL",
+        "factors": 2
+      }
+    }
+  ]
+}

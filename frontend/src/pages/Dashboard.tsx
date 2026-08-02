@@ -137,7 +137,7 @@ export const Dashboard: React.FC = () => {
           <div>
             <h3 className="font-semibold text-amber-900 dark:text-amber-200">Failed to load dashboard</h3>
             <p className="text-sm text-amber-800 dark:text-amber-300 mt-1">{error}</p>
-            <p className="text-xs text-amber-700 dark:text-amber-400 mt-2">Showing mock data. Make sure the backend is running on port 8000.</p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 mt-2">Showing mock data. Make sure the backend is running on port 8001.</p>
           </div>
         </div>
       </AppLayout>

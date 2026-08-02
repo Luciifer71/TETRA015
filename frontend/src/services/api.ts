@@ -2,7 +2,8 @@
  * Frontend API Service
  * Handles all communication with the backend for invoice processing
  * 
- * Base URL: configurable, defaults to http://localhost:8000
+ * Upload API defaults to FastAPI on http://localhost:8000.
+ * Dashboard/auth data defaults to Node API on http://localhost:8001/api/v1.
  * Features:
  * - File upload with progress tracking
  * - Upload status polling
@@ -52,17 +53,16 @@ export interface RiskAssessment {
 export interface UploadDetailResponse {
   id: string;
   original_filename: string;
-  stored_filename: string;
-  file_path: string;
   file_size: number;
   file_type: string;
-  file_extension: string;
   upload_status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
   invoice_id: string | null;
   error_message: string | null;
   extracted_data: ExtractionData | null;
-  validation_result: ValidationResult | null;
-  risk_assessment: RiskAssessment | null;
+  confidence_scores?: Record<string, number> | null;
+  risk_score?: number | null;
+  risk_level?: RiskAssessment["risk_level"] | null;
+  validation_errors?: Array<Record<string, any>> | null;
   uploaded_at: string;
   processed_at: string | null;
 }
@@ -88,7 +88,7 @@ class ApiClient {
   private isDev: boolean = import.meta.env.DEV;
 
   constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl || import.meta.env.VITE_API_URL || "http://localhost:8000";
+    this.baseUrl = baseUrl || import.meta.env.VITE_FASTAPI_URL || "http://localhost:8000";
     this.log("API Client initialized", { baseUrl: this.baseUrl });
   }
 
@@ -388,7 +388,7 @@ class ApiClient {
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_NODE_API_URL || import.meta.env.VITE_API_URL || 'http://localhost:8001/api/v1',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

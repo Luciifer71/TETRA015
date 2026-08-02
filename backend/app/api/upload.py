@@ -84,12 +84,18 @@ async def _process_background(upload_id: str, file_path: str, mime_type: str):
             try:
                 invoice_id = await save_invoice_to_supabase(
                     invoice_data=result.get("extraction", {}),
-                    extraction_result=result.get("extraction", {}),
+                    extraction_result={
+                        "invoice_data": result.get("extraction", {}),
+                        "confidence_scores": result.get("confidence", {}),
+                        "ocr_confidence": result.get("ocr_confidence", 0),
+                    },
                     validation_result=result.get("validation", {}),
                     risk_result=result.get("risk", {}),
                     upload_id=upload_id
                 )
                 if invoice_id:
+                    upload.invoice_id = invoice_id
+                    db.commit()
                     print(f"✅ Invoice saved to Supabase: {invoice_id}")
             except Exception as e:
                 print(f"⚠️  Failed to save to Supabase: {str(e)}")
@@ -122,6 +128,8 @@ async def get_upload_status(upload_id: str, db: Session = Depends(get_db)):
             "risk_score": upload.risk_score,
             "risk_level": upload.risk_level,
             "validation_errors": upload.validation_errors,
+            "error_message": upload.error_message,
+            "invoice_id": upload.invoice_id,
             "uploaded_at": upload.uploaded_at.isoformat() if upload.uploaded_at else None,
             "processed_at": upload.processed_at.isoformat() if upload.processed_at else None,
         },
@@ -150,6 +158,8 @@ async def get_uploads(page: int = 1, limit: int = 20, db: Session = Depends(get_
             "risk_score": upload.risk_score,
             "risk_level": upload.risk_level,
             "validation_errors": upload.validation_errors,
+            "error_message": upload.error_message,
+            "invoice_id": upload.invoice_id,
             "uploaded_at": upload.uploaded_at.isoformat() if upload.uploaded_at else None,
             "processed_at": upload.processed_at.isoformat() if upload.processed_at else None,
         })

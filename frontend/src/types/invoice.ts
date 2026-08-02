@@ -1,6 +1,6 @@
-export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type RiskLevel = 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
-export type InvoiceStatus = 'PENDING' | 'PROCESSED' | 'FLAGGED' | 'APPROVED' | 'REJECTED';
+export type InvoiceStatus = 'PENDING' | 'PROCESSING' | 'PROCESSED' | 'FLAGGED' | 'APPROVED' | 'REJECTED' | 'FAILED';
 
 export interface LineItem {
   id: string;
